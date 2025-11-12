@@ -160,13 +160,14 @@ const Sales = () => {
           variantPrice = Math.max(0, basePrice - discountValue);
         }
         if (!discountType || !Number.isFinite(discountValue)) return;
+        const roundedVariant = Math.round(variantPrice);
         addition.push({
           ...baseProduct,
           _id: `discount-${discount._id}`,
           baseProductId,
           categoryId: baseProduct.categoryId,
           name: `${baseProduct.name} - ${discount.name}`,
-          price: variantPrice,
+          price: roundedVariant,
           originalPrice: basePrice,
           isDiscountProduct: true,
           discount: {
