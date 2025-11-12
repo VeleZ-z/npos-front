@@ -77,10 +77,11 @@ const Sales = () => {
     tip: "",
   });
 
-  const { data: tablesRes } = useQuery({
+  const { data: tablesRes, refetch: refetchTables } = useQuery({
     queryKey: ["tables"],
     queryFn: async () => await getTables(),
     placeholderData: keepPreviousData,
+    refetchInterval: 5000,
   });
   const tablesRaw = tablesRes?.data?.data;
   const tables = useMemo(() => tablesRaw ?? [], [tablesRaw]);
@@ -274,6 +275,7 @@ const Sales = () => {
     onSuccess: ({ data }) => {
       setOrder(data.data);
       qc.invalidateQueries(["tables"]);
+      refetchTables();
       enqueueSnackbar("Producto agregado", { variant: "success" });
     },
     onError: () =>
@@ -293,6 +295,7 @@ const Sales = () => {
         setOrder(data.data);
       }
       qc.invalidateQueries(["tables"]);
+      refetchTables();
     } catch {
       enqueueSnackbar("No se pudo actualizar el item", { variant: "error" });
     }
@@ -306,6 +309,7 @@ const Sales = () => {
       if (nextOrder) setOrder(nextOrder);
       setMoveItem(null);
       qc.invalidateQueries(["tables"]);
+      refetchTables();
       enqueueSnackbar("Producto movido", { variant: "success" });
     },
     onError: () =>
@@ -318,6 +322,7 @@ const Sales = () => {
       if (data?.data) setOrder(data.data);
       setShowCustomerModal(false);
       qc.invalidateQueries(["tables"]);
+      refetchTables();
       enqueueSnackbar("Cliente actualizado", { variant: "success" });
     },
     onError: (err) => {
