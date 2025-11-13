@@ -67,7 +67,7 @@ const GoogleOneTap = () => {
                 state: window.__GIS_STATE__ || undefined,
               });
             }
-          } catch {}
+          } catch { /* empty */ }
         }, 9 * 60 * 1000);
       } catch (e) {
         setError("No se pudo obtener 'state' del servidor");
@@ -106,7 +106,7 @@ const GoogleOneTap = () => {
       // One Tap prompt (ignore if browser disables FedCM)
       try {
         api.prompt();
-      } catch {}
+      } catch { /* empty */ }
       setReady(true);
       return true;
     };
@@ -126,7 +126,7 @@ const GoogleOneTap = () => {
           });
           api.prompt();
         }
-      } catch {}
+      } catch { /* empty */ }
     };
 
     // If API not present, try to inject the script

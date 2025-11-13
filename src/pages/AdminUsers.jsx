@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { getUsers, updateUser as apiUpdateUser, setUserRole as apiSetUserRole, getDocTypes, getStates, getRoles } from '../https';
 import { enqueueSnackbar } from 'notistack';
@@ -89,5 +90,40 @@ const Row = ({ u, docTypes, estados, roles, onSave, onSetRole }) => {
   );
 };
 
-export default AdminUsers;
+const idType = PropTypes.oneOfType([PropTypes.string, PropTypes.number]);
 
+Row.propTypes = {
+  u: PropTypes.shape({
+    _id: idType.isRequired,
+    name: PropTypes.string,
+    email: PropTypes.string,
+    document: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    phone: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    docTypeId: idType,
+    birthday: PropTypes.string,
+    estadoId: idType,
+    role: PropTypes.string,
+  }).isRequired,
+  docTypes: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: idType,
+      name: PropTypes.string,
+    })
+  ).isRequired,
+  estados: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: idType,
+      name: PropTypes.string,
+    })
+  ).isRequired,
+  roles: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: idType,
+      name: PropTypes.string,
+    })
+  ).isRequired,
+  onSave: PropTypes.func.isRequired,
+  onSetRole: PropTypes.func.isRequired,
+};
+
+export default AdminUsers;

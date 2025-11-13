@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { getUserData, getDocTypes, updateProfile } from '../https';
@@ -77,5 +78,9 @@ const Input = ({ label, ...rest }) => (
     <input className="w-full bg-[#1f1f1f] text-white rounded px-3 py-2" {...rest} />
   </div>
 );
+
+Input.propTypes = {
+  label: PropTypes.string.isRequired,
+};
 
 export default Profile;

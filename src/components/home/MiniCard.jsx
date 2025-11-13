@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const formatCurrency = (value) =>
   Number(value || 0).toLocaleString("es-CO", {
@@ -49,6 +50,22 @@ const MiniCard = ({
       </div>
     </div>
   );
+};
+
+MiniCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  icon: PropTypes.node.isRequired,
+  number: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  change: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  isCurrency: PropTypes.bool,
+  isLoading: PropTypes.bool,
+};
+
+MiniCard.defaultProps = {
+  number: 0,
+  change: 0,
+  isCurrency: false,
+  isLoading: false,
 };
 
 export default MiniCard;

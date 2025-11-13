@@ -14,6 +14,7 @@ import {
   getCategories,
   uploadProductImage,
   getTaxes,
+  deleteProduct,
 } from "../https";
 import { enqueueSnackbar } from "notistack";
 import DishModal from "../components/dashboard/DishModal";
@@ -86,6 +87,15 @@ const Inventory = () => {
     },
     onError: () =>
       enqueueSnackbar("Error subiendo imagen", { variant: "error" }),
+  });
+  const delMutation = useMutation({
+    mutationFn: (id) => deleteProduct(id),
+    onSuccess: () => {
+      enqueueSnackbar("Producto eliminado", { variant: "success" });
+      qc.invalidateQueries(["products"]);
+    },
+    onError: () =>
+      enqueueSnackbar("Error eliminando producto", { variant: "error" }),
   });
 
   const [showAdd, setShowAdd] = useState(false);
@@ -167,6 +177,7 @@ const Inventory = () => {
                   onSave={(payload) => upd.mutate({ id: p._id, payload })}
                   onUploadImage={(file) => upImg.mutate({ id: p._id, file })}
                   canManageAll={canManageAll}
+                  onDelete={() => delMutation.mutate(p._id)}
                 />
               ))}
             </tbody>
@@ -340,31 +351,55 @@ const Row = ({
         </select>
       </td>
       <td className="p-3">
-        <button
-          onClick={() => {
-            if (canManageAll) {
-              onSave({
-                name: form.name,
-                codigo_barras: form.barcode,
-                price: Number(form.price),
-                cost: Number(form.cost),
-                quantity: Number(form.quantity),
-                estadoId: form.estadoId || null,
-                alertMinStock:
-                  form.alertMinStock === "" ? null : Number(form.alertMinStock),
-                impuestoId: form.impuestoId ? Number(form.impuestoId) : null,
-              });
-            } else {
-              onSave({
-                quantity: Number(form.quantity),
-                estadoId: form.estadoId || null,
-              });
-            }
-          }}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
-        >
-          Guardar
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              if (canManageAll) {
+                onSave({
+                  name: form.name,
+                  codigo_barras: form.barcode,
+                  price: Number(form.price),
+                  cost: Number(form.cost),
+                  quantity: Number(form.quantity),
+                  estadoId: form.estadoId || null,
+                  alertMinStock:
+                    form.alertMinStock === ""
+                      ? null
+                      : Number(form.alertMinStock),
+                  impuestoId: form.impuestoId ? Number(form.impuestoId) : null,
+                });
+              } else {
+                onSave({
+                  quantity: Number(form.quantity),
+                  estadoId: form.estadoId || null,
+                });
+              }
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
+          >
+            Guardar
+          </button>
+          {canManageAll && (
+            <button
+              onClick={() => {
+                const msg = `CONFIRMACION\n\nPara eliminar el producto escribe exactamente su nombre.\n\nNombre: "${p.name}"\n\nEsta es la confirmación.`;
+                const typed = window.prompt(msg, "");
+                if (typed == null) return;
+                if (String(typed).trim() === String(p.name || "").trim()) {
+                  onDelete();
+                } else {
+                  enqueueSnackbar(
+                    "El nombre no coincide. No se eliminó el producto.",
+                    { variant: "warning" }
+                  );
+                }
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+            >
+              Eliminar
+            </button>
+          )}
+        </div>
       </td>
       <td className="p-3">
         <div className="flex items-center gap-3">

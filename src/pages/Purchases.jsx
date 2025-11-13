@@ -1,4 +1,5 @@
 ﻿import React, { useMemo, useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import {
   useQuery,
@@ -361,6 +362,77 @@ const Input = ({ label, ...rest }) => (
 );
 
 export default Purchases;
+
+const idType = PropTypes.oneOfType([PropTypes.string, PropTypes.number]);
+
+Row.propTypes = {
+  p: PropTypes.shape({
+    _id: idType.isRequired,
+    name: PropTypes.string,
+    provider: PropTypes.shape({
+      name: PropTypes.string,
+      _id: idType,
+    }),
+    stock: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    unit: PropTypes.string,
+    deliveryDate: PropTypes.string,
+    expirationDate: PropTypes.string,
+    cost: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  }).isRequired,
+  isAdmin: PropTypes.bool,
+  isStaff: PropTypes.bool,
+  onUpdateStock: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+};
+
+Row.defaultProps = {
+  isAdmin: false,
+  isStaff: false,
+};
+
+Modal.propTypes = {
+  children: PropTypes.node.isRequired,
+  onClose: PropTypes.func.isRequired,
+  title: PropTypes.string,
+};
+
+Modal.defaultProps = {
+  title: "Nueva Compra",
+};
+
+PurchaseForm.propTypes = {
+  providers: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: idType,
+      name: PropTypes.string,
+    })
+  ).isRequired,
+  onClose: PropTypes.func.isRequired,
+  purchase: PropTypes.shape({
+    _id: idType,
+    name: PropTypes.string,
+    quantity: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    deliveryDate: PropTypes.string,
+    expirationDate: PropTypes.string,
+    cost: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    provider: PropTypes.shape({
+      _id: idType,
+    }),
+    alertMinStock: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    alertMessage: PropTypes.string,
+    unit: PropTypes.string,
+    estadoCompraId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  }),
+};
+
+PurchaseForm.defaultProps = {
+  purchase: null,
+};
+
+Input.propTypes = {
+  label: PropTypes.string.isRequired,
+};
 
 
 

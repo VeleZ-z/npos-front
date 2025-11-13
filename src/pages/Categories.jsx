@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { getCategories, updateCategory, deleteCategory } from '../https';
 import { enqueueSnackbar } from 'notistack';
@@ -84,6 +85,17 @@ const Row = ({ c, onSave, onDelete }) => {
       </td>
     </tr>
   );
+};
+
+const idType = PropTypes.oneOfType([PropTypes.string, PropTypes.number]);
+
+Row.propTypes = {
+  c: PropTypes.shape({
+    _id: idType.isRequired,
+    name: PropTypes.string,
+  }).isRequired,
+  onSave: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default Categories;

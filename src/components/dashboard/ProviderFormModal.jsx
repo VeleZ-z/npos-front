@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { motion } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
 
@@ -79,3 +80,18 @@ const ProviderFormModal = ({ initial, onSubmit, onClose }) => {
 
 export default ProviderFormModal;
 
+ProviderFormModal.propTypes = {
+  initial: PropTypes.shape({
+    _id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    name: PropTypes.string,
+    phone: PropTypes.string,
+    email: PropTypes.string,
+    contact: PropTypes.string,
+  }),
+  onSubmit: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+};
+
+ProviderFormModal.defaultProps = {
+  initial: null,
+};

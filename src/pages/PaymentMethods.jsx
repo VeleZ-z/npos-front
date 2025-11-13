@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import {
   useQuery,
@@ -218,6 +219,30 @@ const Row = ({ pm, estados, isAdmin, onSave, onSetEstado, onDelete }) => {
       )}
     </tr>
   );
+};
+
+const idType = PropTypes.oneOfType([PropTypes.string, PropTypes.number]);
+
+Row.propTypes = {
+  pm: PropTypes.shape({
+    _id: idType.isRequired,
+    name: PropTypes.string,
+    estadoId: idType,
+  }).isRequired,
+  estados: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: idType,
+      name: PropTypes.string,
+    })
+  ).isRequired,
+  isAdmin: PropTypes.bool,
+  onSave: PropTypes.func.isRequired,
+  onSetEstado: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+};
+
+Row.defaultProps = {
+  isAdmin: false,
 };
 
 export default PaymentMethods;

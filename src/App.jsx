@@ -5,6 +5,7 @@
   useLocation,
   Navigate,
 } from "react-router-dom";
+import PropTypes from "prop-types";
 import {
   Home,
   Auth,
@@ -200,6 +201,15 @@ function ProtectedRoutes({ children, roles }) {
 
   return children;
 }
+
+ProtectedRoutes.propTypes = {
+  children: PropTypes.node.isRequired,
+  roles: PropTypes.arrayOf(PropTypes.string),
+};
+
+ProtectedRoutes.defaultProps = {
+  roles: undefined,
+};
 
 function App() {
   return (

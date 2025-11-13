@@ -21,7 +21,7 @@ const Header = () => {
       console.log(data);
       try {
         localStorage.removeItem("token");
-      } catch {}
+      } catch { /* empty */ }
       dispatch(removeUser());
       navigate("/auth");
     },

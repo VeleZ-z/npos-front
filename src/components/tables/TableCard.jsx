@@ -1,11 +1,12 @@
 
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 import { getAvatarName, getBgColor } from "../../utils"
 import { useDispatch } from "react-redux";
 import { updateTable } from "../../redux/slices/customerSlice";
 import { FaLongArrowAltRight } from "react-icons/fa";
 
-const TableCard = ({id, name, status, initials, seats}) => {
+const TableCard = ({ id, name, status, initials, seats }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleClick = (name) => {
@@ -46,3 +47,17 @@ const TableCard = ({id, name, status, initials, seats}) => {
 };
 
 export default TableCard;
+
+TableCard.propTypes = {
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  status: PropTypes.string,
+  initials: PropTypes.string,
+  seats: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
+
+TableCard.defaultProps = {
+  status: "",
+  initials: "",
+  seats: 0,
+};

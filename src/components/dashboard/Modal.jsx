@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { motion } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
 import { useMutation } from "@tanstack/react-query";
@@ -109,3 +110,7 @@ const Modal = ({ setIsTableModalOpen }) => {
 };
 
 export default Modal;
+
+Modal.propTypes = {
+  setIsTableModalOpen: PropTypes.func.isRequired,
+};

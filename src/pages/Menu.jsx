@@ -16,42 +16,48 @@ const Menu = () => {
   const customerData = useSelector((state) => state.customer);
 
   return (
-    <section className="bg-[#1f1f1f] min-h-screen grid grid-cols-4 gap-3 pb-20">
-      {/* Left Div - ocupa 3/4 */}
-      <div className="col-span-3 flex flex-col">
-        <div className="flex items-center justify-between px-6 py-4">
+    <section className="bg-[#1f1f1f] min-h-screen pb-28">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-4">
             <BackButton />
-            <h1 className="text-[#f5f5f5] text-2xl font-bold tracking-wider">
-              Menu
-            </h1>
+            <div>
+              <p className="text-xs uppercase tracking-[0.4em] text-[#ababab]">
+                Menu
+              </p>
+              <h1 className="text-[#f5f5f5] text-2xl font-bold tracking-wider">
+                Selecciona tus productos
+              </h1>
+            </div>
           </div>
-          <div className="flex items-center gap-3 cursor-pointer">
-            <MdRestaurantMenu className="text-[#f5f5f5] text-3xl" />
-            <div className="flex flex-col items-start">
-              <h1 className="text-md text-[#f5f5f5] font-semibold tracking-wide">
-                {customerData.customerName || "Customer Name"}
+          <div className="flex items-center gap-3 rounded-2xl bg-[#1a1a1a] px-4 py-3 w-full max-w-sm lg:max-w-none">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#2a2a2a]">
+              <MdRestaurantMenu className="text-[#f5f5f5] text-2xl" />
+            </div>
+            <div className="flex flex-col items-start text-left">
+              <h1 className="text-sm sm:text-base text-[#f5f5f5] font-semibold tracking-wide truncate w-full">
+                {customerData.customerName || "Cliente"}
               </h1>
               <p className="text-xs text-[#ababab] font-medium">
-                Table : {customerData.table?.tableNo || "N/A"}
+                Mesa: {customerData.table?.tableNo || "N/A"}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Menu Items */}
-        <MenuContainer />
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="flex flex-col gap-6 min-w-0">
+            <MenuContainer />
+          </div>
+          <div className="bg-[#1a1a1a] rounded-2xl p-4 sm:p-5 flex flex-col gap-4 h-fit sticky top-6">
+            <CustomerInfo />
+            <hr className="border-[#2a2a2a]" />
+            <CartInfo />
+            <hr className="border-[#2a2a2a]" />
+            <Bill />
+          </div>
+        </div>
       </div>
-
-      {/* Right Div - ocupa 1/4 */}
-      <div className="col-span-1 bg-[#1a1a1a] rounded-lg p-4 flex flex-col gap-3">
-        <CustomerInfo />
-        <hr className="border-[#2a2a2a]" />
-        <CartInfo />
-        <hr className="border-[#2a2a2a]" />
-        <Bill />
-      </div>
-
       <BottomNav />
     </section>
   );

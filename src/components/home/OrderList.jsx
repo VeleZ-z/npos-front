@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { FaCheckDouble, FaLongArrowAltRight } from "react-icons/fa";
 import { FaCircle } from "react-icons/fa";
 import { getAvatarName } from "../../utils/index";
@@ -57,3 +58,20 @@ const OrderList = ({ order }) => {
 };
 
 export default OrderList;
+
+OrderList.propTypes = {
+  order: PropTypes.shape({
+    customer: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    items: PropTypes.array,
+    table: PropTypes.shape({
+      number: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    }),
+    orderStatus: PropTypes.string,
+  }),
+};
+
+OrderList.defaultProps = {
+  order: null,
+};

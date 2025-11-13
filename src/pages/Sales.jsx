@@ -54,6 +54,7 @@ const Sales = () => {
   useEffect(() => {
     document.title = "NPOS | Ventas";
   }, []);
+  const backendUrl = (import.meta.env.VITE_BACKEND_URL || "").replace(/\/$/, "");
   const role = useSelector((state) => state.user.role);
   const roleLower = String(role || "").toLowerCase();
   const isAdmin = roleLower === "admin";
@@ -171,6 +172,7 @@ const Sales = () => {
           price: roundedVariant,
           originalPrice: basePrice,
           isDiscountProduct: true,
+          imageUrl: baseProduct.imageUrl || null,
           discount: {
             id: discount._id,
             type: discountType,
@@ -210,11 +212,23 @@ const Sales = () => {
       : fullProducts;
     const groups = categories.map((c) => ({
       cat: c,
-      items: base.filter((p) => Number(p.categoryId) === Number(c._id)),
+      items: base
+        .filter((p) => Number(p.categoryId) === Number(c._id))
+        .map((item) => ({
+          ...item,
+          imageSrc: item.imageUrl
+            ? `${backendUrl}${item.imageUrl}`
+            : null,
+        })),
     }));
-    const noCat = base.filter((p) => !p.categoryId);
+    const noCat = base
+      .filter((p) => !p.categoryId)
+      .map((item) => ({
+        ...item,
+        imageSrc: item.imageUrl ? `${backendUrl}${item.imageUrl}` : null,
+      }));
     return { groups, noCat };
-  }, [fullProducts, categories, search]);
+  }, [fullProducts, categories, search, backendUrl]);
 
   const availableTables = useMemo(
     () => tables.filter((t) => t._id !== selectedMesa?._id),
@@ -1334,8 +1348,16 @@ const Sales = () => {
                               payload,
                             });
                           }}
-                          className="bg-[#1f1f1f] hover:bg-[#262626] border border-[#333] rounded p-3 text-left"
+                          className="bg-[#1f1f1f] hover:bg-[#262626] border border-[#333] rounded p-3 text-left flex flex-col gap-2"
                         >
+                          <div className="w-full h-32 rounded-md bg-[#111] overflow-hidden flex items-center justify-center">
+                            <img
+                              src={p.imageSrc || "https://via.placeholder.com/300x200?text=Sin+imagen"}
+                              alt={p.name}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          </div>
                           <div className="text-[#f5f5f5] font-semibold">
                             {p.name}
                           </div>
@@ -1343,12 +1365,12 @@ const Sales = () => {
                             {p.isDiscountProduct && p.originalPrice ? (
                               <>
                                 <span className="line-through text-[#777] mr-2">
-                                  ${p.originalPrice}
+                                  ${p.originalPrice.toLocaleString()}
                                 </span>
-                                <span>${p.price}</span>
+                                <span>${p.price.toLocaleString()}</span>
                               </>
                             ) : (
-                              <>${p.price}</>
+                              <>${p.price.toLocaleString()}</>
                             )}
                           </div>
                         </button>
@@ -1377,8 +1399,16 @@ const Sales = () => {
                               payload,
                             });
                           }}
-                          className="bg-[#1f1f1f] hover:bg-[#262626] border border-[#333] rounded p-3 text-left"
+                          className="bg-[#1f1f1f] hover:bg-[#262626] border border-[#333] rounded p-3 text-left flex flex-col gap-2"
                         >
+                          <div className="w-full h-32 rounded-md bg-[#111] overflow-hidden flex items-center justify-center">
+                            <img
+                              src={p.imageSrc || "https://via.placeholder.com/300x200?text=Sin+imagen"}
+                              alt={p.name}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          </div>
                           <div className="text-[#f5f5f5] font-semibold">
                             {p.name}
                           </div>
@@ -1386,12 +1416,12 @@ const Sales = () => {
                             {p.isDiscountProduct && p.originalPrice ? (
                               <>
                                 <span className="line-through text-[#777] mr-2">
-                                  ${p.originalPrice}
+                                  ${p.originalPrice.toLocaleString()}
                                 </span>
-                                <span>${p.price}</span>
+                                <span>${p.price.toLocaleString()}</span>
                               </>
                             ) : (
-                              <>${p.price}</>
+                              <>${p.price.toLocaleString()}</>
                             )}
                           </div>
                         </button>

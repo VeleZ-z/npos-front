@@ -150,7 +150,7 @@ const MenuContainer = () => {
 
   return (
     <>
-      <div className="grid grid-cols-4 gap-4 px-10 py-4 w-[100%]">
+    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 w-full">
         {categories.map((menu) => {
           const count = fullProducts.filter(
             (p) => Number(p.categoryId) === Number(menu._id)
@@ -158,8 +158,13 @@ const MenuContainer = () => {
           return (
             <div
               key={menu._id}
-              className="flex flex-col items-start justify-between p-4 rounded-lg h-[100px] cursor-pointer"
-              style={{ backgroundColor: "#333" }}
+              className="flex flex-col items-start justify-between p-3 sm:p-4 rounded-xl min-h-[96px] cursor-pointer transition-all duration-200"
+              style={{
+                backgroundColor:
+                  (selected?._id || categories[0]?._id) === menu._id
+                    ? "#3b3b3b"
+                    : "#2b2b2b",
+              }}
               onClick={() => {
                 setSelected(menu);
                 setItemId(0);
@@ -167,12 +172,14 @@ const MenuContainer = () => {
               }}
             >
               <div className="flex items-center justify-between w-full">
-                <h1 className="text-[#f5f5f5] text-lg font-semibold">{menu.name}</h1>
+                <h1 className="text-[#f5f5f5] text-sm sm:text-base font-semibold truncate pr-3">
+                  {menu.name}
+                </h1>
                 {(selected?._id || categories[0]?._id) === menu._id && (
                   <GrRadialSelected className="text-white" size={20} />
                 )}
               </div>
-              <p className="text-[#ababab] text-sm font-semibold">{count} Items</p>
+              <p className="text-[#ababab] text-xs sm:text-sm font-semibold">{count} Items</p>
             </div>
           );
         })}
@@ -180,7 +187,7 @@ const MenuContainer = () => {
 
       <hr className="border-[#2a2a2a] border-t-2 mt-4" />
 
-      <div className="grid grid-cols-4 gap-4 px-10 py-4 w-[100%]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 w-full">
         {selectedItems.map((item) => {
           const countForItem = itemId === item._id ? itemCount : 0;
           const imageSrc =
@@ -189,7 +196,7 @@ const MenuContainer = () => {
           return (
             <div
               key={item._id}
-              className="flex flex-col gap-3 p-4 rounded-lg min-h-[260px] cursor-pointer hover:bg-[#2a2a2a] bg-[#1a1a1a]"
+              className="flex flex-col gap-3 p-4 rounded-2xl min-h-[260px] cursor-pointer hover:bg-[#2a2a2a] bg-[#1a1a1a] shadow-lg"
             >
               <div className="w-full h-[150px] bg-[#111] rounded-md overflow-hidden flex items-center justify-center">
                 <img
@@ -212,13 +219,19 @@ const MenuContainer = () => {
                 </button>
               </div>
               <div className="flex items-center justify-between w-full">
-                <p className="text-[#f5f5f5] text-xl font-bold">$ {item.price}</p>
-                <div className="flex items-center justify-between bg-[#1f1f1f] px-4 py-3 rounded-lg gap-6 w-[55%]">
-                  <button onClick={() => decrement(item._id)} className="text-yellow-500 text-2xl">
+                <p className="text-[#f5f5f5] text-xl font-bold">$ {item.price.toLocaleString()}</p>
+                <div className="flex items-center justify-between bg-[#1f1f1f] px-4 py-2 rounded-full gap-6 w-[60%] sm:w-[55%]">
+                  <button
+                    onClick={() => decrement(item._id)}
+                    className="text-yellow-500 text-2xl"
+                  >
                     &minus;
                   </button>
                   <span className="text-white">{countForItem}</span>
-                  <button onClick={() => increment(item._id)} className="text-yellow-500 text-2xl">
+                  <button
+                    onClick={() => increment(item._id)}
+                    className="text-yellow-500 text-2xl"
+                  >
                     &#43;
                   </button>
                 </div>

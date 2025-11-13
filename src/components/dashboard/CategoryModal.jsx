@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { motion } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -69,5 +70,8 @@ const CategoryModal = ({ onClose }) => {
   );
 };
 
-export default CategoryModal;
+CategoryModal.propTypes = {
+  onClose: PropTypes.func.isRequired,
+};
 
+export default CategoryModal;
