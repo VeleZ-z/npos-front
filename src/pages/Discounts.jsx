@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getAdminDiscounts,
@@ -19,7 +19,22 @@ const initialForm = {
   productoId: "",
 };
 
+const resolveDiscountImageSrc = (discount, backendUrl) => {
+  if (!discount) return null;
+  if (discount.imageInline) return discount.imageInline;
+  const raw = discount.imageUrl;
+  if (!raw) return null;
+  if (/^data:/i.test(raw) || /^https?:\/\//i.test(raw)) {
+    return raw;
+  }
+  return backendUrl ? `${backendUrl}${raw}` : raw;
+};
+
 const Discounts = () => {
+  const backendUrl = useMemo(
+    () => (import.meta.env.VITE_BACKEND_URL || "").replace(/\/$/, ""),
+    []
+  );
   const qc = useQueryClient();
   const [form, setForm] = useState(initialForm);
   const [flyer, setFlyer] = useState(null);
@@ -288,11 +303,9 @@ const Discounts = () => {
                       : "N/A"}
                   </p>
                 </div>
-                {discount.imageUrl && (
+                {resolveDiscountImageSrc(discount, backendUrl) && (
                   <img
-                    src={`${import.meta.env.VITE_BACKEND_URL}${
-                      discount.imageUrl
-                    }`}
+                    src={resolveDiscountImageSrc(discount, backendUrl)}
                     alt={discount.name}
                     className="w-32 h-32 object-cover rounded-lg border border-[#333]"
                   />
