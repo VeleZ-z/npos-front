@@ -315,7 +315,8 @@ const Discounts = () => {
               </div>
             ))}
           </div>
-        )}
+	        )}
+	    </div>
 	    </div>
 	  </section>
 	);

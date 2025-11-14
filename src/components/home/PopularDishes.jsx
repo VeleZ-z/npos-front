@@ -1,10 +1,12 @@
-
 import { useNavigate } from "react-router-dom";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
 import { getPopularProductsStats } from "../../https";
 
 const PopularDishes = () => {
   const navigate = useNavigate();
+  const { role } = useSelector((state) => state.user || {});
+  const isAdmin = String(role || "").toLowerCase() === "admin";
   const { data: resData, isLoading } = useQuery({
     queryKey: ["popular-products", { limit: 3 }],
     queryFn: async () => {
@@ -73,24 +75,29 @@ const PopularDishes = () => {
                 ) : (
                   <div className="w-[50px] h-[50px] rounded-full bg-[#333]" />
                 )}
-                <div className="flex flex-col flex-1">
-                  <h1 className="text-[#f5f5f5] font-semibold tracking-wide capitalize">
-                    {p.name}
-                  </h1>
-                  <p className="text-[#ababab] text-sm mt-1">
-                    Vendidos: {p.totalQuantity} • ${" "}
-                    {formatCurrency(p.unitPrice)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-[#f5f5f5] text-sm font-semibold">
-                    ${formatCurrency(p.totalAmount)}
-                  </p>
-                  <p className="text-[#777] text-xs">Total acumulado</p>
-                </div>
-              </div>
-            ))
-          )}
+	                <div className="flex flex-col flex-1">
+	                  <h1 className="text-[#f5f5f5] font-semibold tracking-wide capitalize">
+	                    {p.name}
+	                  </h1>
+	                  {isAdmin && (
+	                    <p className="text-[#ababab] text-sm mt-1">
+	                      Vendidos: {p.totalQuantity} • ${" "}
+	                      {formatCurrency(p.unitPrice)}
+	                    </p>
+	                  )}
+	                </div>
+	                {isAdmin && (
+	                  <div className="text-right">
+	                    <p className="text-[#f5f5f5] text-sm font-semibold">
+	                      ${formatCurrency(p.totalAmount)}
+	                    </p>
+	                    <p className="text-[#777] text-xs">Total acumulado</p>
+	                  </div>
+	                )}
+	              </div>
+	            ))
+	          )}
+	      </div>
 	  </div>
 	);
 };
