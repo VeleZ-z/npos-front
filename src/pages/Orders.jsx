@@ -7,9 +7,25 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getOrders } from "../https/index";
 import { enqueueSnackbar } from "notistack"
 
+const STATUS_FILTERS = [
+  { id: "all", label: "Todas" },
+  { id: "progress", label: "En proceso" },
+  { id: "ready", label: "Listas" },
+  { id: "completed", label: "Completadas" },
+];
+
+const DATE_FILTERS = [
+  { id: "all", label: "Todo el tiempo" },
+  { id: "30", label: "Últimos 30 días" },
+  { id: "7", label: "Últimos 7 días" },
+  { id: "custom", label: "Personalizado" },
+];
+
 const Orders = () => {
 
   const [status, setStatus] = useState("all");
+  const [range, setRange] = useState("30");
+  const [customDates, setCustomDates] = useState({ from: "", to: "" });
 
     useEffect(() => {
       document.title = "NPOS | Orders"
@@ -31,53 +47,126 @@ const Orders = () => {
   const orders = useMemo(() => {
     const raw = resData?.data?.data ?? [];
     if (!Array.isArray(raw)) return [];
-    const filtered = raw.filter((order) => (order?.items?.length || 0) > 0);
-    if (status === "all") return filtered;
-    if (status === "progress")
-      return filtered.filter((order) => {
-        const st = String(order?.orderStatus || "").toUpperCase();
-        return st === "POR_APROBAR" || st === "PENDIENTE" || st === "IN_PROGRESS";
-      });
-    if (status === "ready")
-      return filtered.filter(
-        (order) => String(order?.orderStatus || "").toUpperCase() === "LISTO"
-      );
-    if (status === "completed")
-      return filtered.filter(
-        (order) => String(order?.orderStatus || "").toUpperCase() === "ENTREGADO"
-      );
-    return filtered;
-  }, [resData, status]);
+    const withItems = raw.filter((order) => (order?.items?.length || 0) > 0);
+
+    const now = new Date();
+    let fromDate = null;
+    let toDate = null;
+    if (range === "custom") {
+      if (customDates.from) {
+        fromDate = new Date(customDates.from);
+        fromDate.setHours(0, 0, 0, 0);
+      }
+      if (customDates.to) {
+        toDate = new Date(customDates.to);
+        toDate.setHours(23, 59, 59, 999);
+      }
+    } else if (range !== "all") {
+      const days = Number(range);
+      if (Number.isFinite(days) && days > 0) {
+        fromDate = new Date();
+        fromDate.setDate(fromDate.getDate() - days);
+        fromDate.setHours(0, 0, 0, 0);
+        toDate = now;
+      }
+    }
+
+    return withItems.filter((order) => {
+      const st = String(order?.orderStatus || "").toUpperCase();
+      switch (status) {
+        case "progress":
+          if (!(st === "POR_APROBAR" || st === "PENDIENTE" || st === "IN_PROGRESS"))
+            return false;
+          break;
+        case "ready":
+          if (st !== "LISTO") return false;
+          break;
+        case "completed":
+          if (st !== "ENTREGADO" && st !== "PAGADO") return false;
+          break;
+        default:
+          break;
+      }
+
+      const orderDate = order?.orderDate ? new Date(order.orderDate) : null;
+      if (!orderDate || Number.isNaN(orderDate.getTime())) return false;
+      if (fromDate && orderDate < fromDate) return false;
+      if (toDate && orderDate > toDate) return false;
+      return true;
+    });
+  }, [resData, status, range, customDates]);
 
   return (
-    <section className="bg-[#1f1f1f]  h-[calc(100vh-5rem)] overflow-hidden">
-      <div className="flex items-center justify-between px-10 py-4">
+    <section className="bg-[#1f1f1f] min-h-[calc(100vh-5rem)] overflow-hidden flex flex-col">
+      <div className="flex flex-col gap-6 px-6 md:px-10 py-4">
         <div className="flex items-center gap-4">
           <BackButton />
           <h1 className="text-[#f5f5f5] text-2xl font-bold tracking-wider">
             Orders
           </h1>
         </div>
-        {String(role || '').toLowerCase() !== 'customer' && (
-          <div className="flex items-center justify-around gap-4">
-            <button onClick={() => setStatus("all")} className={`text-[#ababab] text-lg ${status === "all" && "bg-[#383838] rounded-lg px-5 py-2"}  rounded-lg px-5 py-2 font-semibold`}>
-              All
+
+        <div className="flex flex-wrap gap-3">
+          {STATUS_FILTERS.map((filter) => (
+            <button
+              key={filter.id}
+              onClick={() => setStatus(filter.id)}
+              className={`rounded-full px-4 py-2 text-sm font-semibold ${
+                status === filter.id
+                  ? "bg-[#f6b100] text-[#1f1f1f]"
+                  : "bg-[#2b2b2b] text-[#f5f5f5]"
+              }`}
+            >
+              {filter.label}
             </button>
-            <button onClick={() => setStatus("progress")} className={`text-[#ababab] text-lg ${status === "progress" && "bg-[#383838] rounded-lg px-5 py-2"}  rounded-lg px-5 py-2 font-semibold`}>
-              In Progress
+          ))}
+        </div>
+
+        <div className="flex flex-wrap gap-3 items-center">
+          {DATE_FILTERS.map((filter) => (
+            <button
+              key={filter.id}
+              onClick={() => setRange(filter.id)}
+              className={`rounded-full px-4 py-2 text-sm font-semibold ${
+                range === filter.id
+                  ? "bg-[#f6b100] text-[#1f1f1f]"
+                  : "bg-[#2b2b2b] text-[#f5f5f5]"
+              }`}
+            >
+              {filter.label}
             </button>
-            <button onClick={() => setStatus("ready")} className={`text-[#ababab] text-lg ${status === "ready" && "bg-[#383838] rounded-lg px-5 py-2"}  rounded-lg px-5 py-2 font-semibold`}>
-              Ready
-            </button>
-            <button onClick={() => setStatus("completed")} className={`text-[#ababab] text-lg ${status === "completed" && "bg-[#383838] rounded-lg px-5 py-2"}  rounded-lg px-5 py-2 font-semibold`}>
-              Completed
-            </button>
-          </div>
-        )}
+          ))}
+          {range === "custom" && (
+            <div className="flex flex-wrap gap-3 text-sm text-[#f5f5f5]">
+              <label className="flex items-center gap-2">
+                Desde:
+                <input
+                  type="date"
+                  value={customDates.from}
+                  onChange={(e) =>
+                    setCustomDates((prev) => ({ ...prev, from: e.target.value }))
+                  }
+                  className="bg-[#1a1a1a] border border-[#333] rounded px-2 py-1"
+                />
+              </label>
+              <label className="flex items-center gap-2">
+                Hasta:
+                <input
+                  type="date"
+                  value={customDates.to}
+                  onChange={(e) =>
+                    setCustomDates((prev) => ({ ...prev, to: e.target.value }))
+                  }
+                  className="bg-[#1a1a1a] border border-[#333] rounded px-2 py-1"
+                />
+              </label>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6 md:px-10 py-4 scrollbar-hide">
-        <div className="flex flex-col gap-5 max-w-4xl mx-auto">
+      <div className="flex-1 overflow-y-auto px-4 md:px-10 pb-6 scrollbar-hide">
+        <div className="flex flex-col gap-5 max-w-5xl mx-auto w-full">
           {orders.length > 0 ? (
             orders.map((order) => (
               <OrderCard key={order._id} order={order} />
