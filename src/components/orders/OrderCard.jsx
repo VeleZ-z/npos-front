@@ -15,7 +15,7 @@ const OrderCard = ({ order }) => {
   const orderStatus = order.orderStatus || "PENDIENTE";
 
   return (
-    <div className="w-[500px] bg-[#262626] p-4 rounded-lg mb-4">
+    <div className="w-full bg-[#262626] p-4 rounded-lg mb-4">
       <div className="flex items-center gap-5">
         <button className="bg-[#f6b100] p-3 text-xl font-bold rounded-lg">
           {getAvatarName(customerName)}

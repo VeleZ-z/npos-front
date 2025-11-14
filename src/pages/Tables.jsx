@@ -4,6 +4,7 @@ import BackButton from "../components/shared/BackButton";
 import TableCard from "../components/tables/TableCard";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getTables } from "../https";
+import useHideBottomNav from "../hooks/useHideBottomNav";
 
 const Tables = () => {
   const [status, setStatus] = useState("all");
@@ -11,6 +12,8 @@ const Tables = () => {
   useEffect(() => {
     document.title = "NPOS | Tables";
   }, []);
+
+  useHideBottomNav((pathname) => pathname === "/tables");
 
   const { data: resData, isError } = useQuery({
     queryKey: ["tables"],

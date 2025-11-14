@@ -64,7 +64,10 @@ const BottomNav = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#262626] p-2 h-16 flex justify-around">
+    <div
+      id="bottom-nav"
+      className="fixed bottom-0 left-0 right-0 bg-[#262626] p-2 h-16 flex justify-around"
+    >
       {(() => {
         if (isStaff) {
           return (

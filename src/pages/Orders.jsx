@@ -166,15 +166,15 @@ const Orders = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 md:px-10 pb-6 scrollbar-hide">
-        <div className="flex flex-col gap-5 max-w-5xl mx-auto w-full">
-          {orders.length > 0 ? (
-            orders.map((order) => (
+        {orders.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 max-w-6xl mx-auto w-full">
+            {orders.map((order) => (
               <OrderCard key={order._id} order={order} />
-            ))
-          ) : (
-            <p className="text-gray-500 text-center">No orders available</p>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-center">No orders available</p>
+        )}
       </div>
 
       <BottomNav />

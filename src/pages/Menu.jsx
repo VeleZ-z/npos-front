@@ -7,11 +7,14 @@ import CustomerInfo from "../components/menu/CustomerInfo";
 import CartInfo from "../components/menu/CartInfo";
 import Bill from "../components/menu/Bill";
 import { useSelector } from "react-redux";
+import useHideBottomNav from "../hooks/useHideBottomNav";
 
 const Menu = () => {
   useEffect(() => {
     document.title = "NPOS | Menu";
   }, []);
+
+  useHideBottomNav(() => true);
 
   const customerData = useSelector((state) => state.customer);
 
