@@ -6,6 +6,7 @@
   Navigate,
 } from "react-router-dom";
 import PropTypes from "prop-types";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Home,
   Auth,
@@ -30,17 +31,53 @@ import Header from "./components/shared/Header";
 import { useSelector } from "react-redux";
 import useLoadData from "./hooks/useLoadData";
 import FullScreenLoader from "./components/shared/FullScreenLoader";
+import { LoginModalProvider } from "./context/LoginModalContext";
+import LoginModal from "./components/auth/LoginModal";
 
 function Layout() {
   const isLoading = useLoadData();
   const location = useLocation();
   const hideHeaderRoutes = ["/auth", "/cashier"];
   const { isAuth } = useSelector((state) => state.user);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [loginDismissed, setLoginDismissed] = useState(false);
+
+  const isHome = location.pathname === "/";
+
+  useEffect(() => {
+    if (isAuth) {
+      setLoginModalOpen(false);
+      setLoginDismissed(false);
+      return;
+    }
+    if (!loginDismissed && isHome) {
+      setLoginModalOpen(true);
+    }
+  }, [isAuth, loginDismissed, isHome]);
+
+  const openLoginModal = useCallback(() => {
+    if (isAuth) return;
+    setLoginDismissed(false);
+    setLoginModalOpen(true);
+  }, [isAuth]);
+
+  const closeLoginModal = useCallback(() => {
+    setLoginModalOpen(false);
+    setLoginDismissed(true);
+  }, []);
+
+  const loginContextValue = useMemo(
+    () => ({
+      openLoginModal,
+      closeLoginModal,
+    }),
+    [openLoginModal, closeLoginModal]
+  );
 
   if (isLoading) return <FullScreenLoader />;
 
   return (
-    <>
+    <LoginModalProvider value={loginContextValue}>
       {!hideHeaderRoutes.includes(location.pathname) && <Header />}
       <Routes>
         <Route
@@ -182,7 +219,8 @@ function Layout() {
         />
         <Route path="*" element={<div>Not Found</div>} />
       </Routes>
-    </>
+      <LoginModal open={loginModalOpen && !isAuth} onClose={closeLoginModal} />
+    </LoginModalProvider>
   );
 }
 

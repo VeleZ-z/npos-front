@@ -74,10 +74,6 @@ const GoogleOneTap = () => {
       }
     };
 
-    // Prevent double init in React StrictMode
-    if (window.__GSI_INIT_DONE) return;
-    window.__GSI_INIT_DONE = true;
-
     let cancelled = false;
     const init = () => {
       const api = window.google?.accounts?.id;

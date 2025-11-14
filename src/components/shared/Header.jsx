@@ -9,11 +9,14 @@ import { useNavigate } from "react-router-dom";
 import { MdDashboard } from "react-icons/md";
 import { GiPayMoney } from "react-icons/gi";
 import AlertsBell from "./AlertsBell";
+import { useLoginModal } from "../../context/LoginModalContext";
 
 const Header = () => {
   const userData = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { openLoginModal } = useLoginModal();
+  const isAuth = Boolean(userData?.isAuth);
 
   const logoutMutation = useMutation({
     mutationFn: () => logout(),
@@ -69,23 +72,25 @@ const Header = () => {
         {<AlertsBell />}
 
         <div
-          onClick={() => navigate("/profile")}
+          onClick={() => (isAuth ? navigate("/profile") : openLoginModal())}
           className="flex items-center gap-3 cursor-pointer"
         >
           <FaUserCircle className="text-[#f5f5f5] text-4xl" />
           <div className="flex flex-col items-start">
             <h1 className="text-md text-[#f5f5f5] font-semibold tracking-wide">
-              {userData.name || "TEST USER"}
+              {isAuth ? userData.name : "Invitado"}
             </h1>
             <p className="text-xs text-[#ababab] font-medium">
-              {userData.role || "Role"}
+              {isAuth ? userData.role : "Sin sesión"}
             </p>
           </div>
-          <IoLogOut
-            onClick={handleLogout}
-            className="text-[#f5f5f5] ml-2"
-            size={40}
-          />
+          {isAuth && (
+            <IoLogOut
+              onClick={handleLogout}
+              className="text-[#f5f5f5] ml-2"
+              size={40}
+            />
+          )}
         </div>
       </div>
     </header>
