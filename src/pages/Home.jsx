@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import BottomNav from "../components/shared/BottomNav";
-import CustomerGreeting from "../components/home/CustomerGreeting";
 import DiscountsTable from "../components/home/DiscountsTable";
 import Greetings from "../components/home/Greetings";
 import MiniCard from "../components/home/MiniCard";
@@ -47,10 +46,10 @@ const Home = () => {
 	          <div className="page-card">
 	            <Greetings />
 	          </div>
-	          {isStaff ? (
-	            <>
-	              <div className="page-card">
-	                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {isStaff ? (
+            <>
+              <div className="page-card">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 	                  {miniCards.map((card) => (
 	                    <MiniCard
 	                      key={card.title}
@@ -67,11 +66,10 @@ const Home = () => {
 	              <RecentOrders />
 	            </>
 	          ) : (
-	            <div className="page-card space-y-6">
-	              <CustomerGreeting />
-	              <DiscountsTable />
-	            </div>
-	          )}
+            <div className="page-card">
+              <DiscountsTable />
+            </div>
+          )}
 	        </div>
 	        <div className="w-full xl:flex-[2]">
 	          <PopularDishes />

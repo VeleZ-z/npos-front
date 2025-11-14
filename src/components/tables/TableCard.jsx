@@ -31,7 +31,11 @@ const TableCard = ({ id, name, status, initials, seats }) => {
       : "bg-[#262626] border border-transparent";
 
   return (
-    <div onClick={() => handleClick(name)} key={id} className={`w-[220px] h-[220px] hover:bg-[#2c2c2c] p-4 rounded-lg cursor-pointer ${cardClass}`}>
+    <div
+      onClick={() => handleClick(name)}
+      key={id}
+      className={`w-full min-h-[220px] hover:bg-[#2c2c2c] p-4 rounded-lg cursor-pointer transition ${cardClass}`}
+    >
       <div className="flex items-center justify-between px-1">
         <h1 className="text-[#f5f5f5] text-xl font-semibold">Table <FaLongArrowAltRight className="text-[#ababab] ml-2 inline" /> {name}</h1>
         <p className={`${statusLabel.className} px-2 py-1 rounded-lg`}>
@@ -39,9 +43,16 @@ const TableCard = ({ id, name, status, initials, seats }) => {
         </p>
       </div>
       <div className="flex items-center justify-center mt-5 mb-8">
-        <h1 className={`text-white rounded-full p-5 text-xl`} style={{backgroundColor : initials ? getBgColor() : "#1f1f1f"}} >{getAvatarName(initials) || "N/A"}</h1>
+        <h1
+          className="text-white rounded-full p-5 text-xl"
+          style={{ backgroundColor: initials ? getBgColor() : "#1f1f1f" }}
+        >
+          {getAvatarName(initials) || "N/A"}
+        </h1>
       </div>
-      <p className="text-[#ababab] text-xs">Seats: <span className="text-[#f5f5f5]">{seats}</span></p>
+      <p className="text-[#ababab] text-xs">
+        Seats: <span className="text-[#f5f5f5]">{seats}</span>
+      </p>
     </div>
   );
 };

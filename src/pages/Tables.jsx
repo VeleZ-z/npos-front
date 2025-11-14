@@ -51,22 +51,22 @@ const Tables = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-5 gap-3 px-16 py-4 h-[650px] overflow-y-scroll scrollbar-hide">
-        {resData?.data?.data?.map((table) => {
-          // Obtener el nombre del cliente actual de la orden
-          const customerName = table?.currentOrder?.customer?.name || "Disponible";
-          
-          return (
-            <TableCard
-              key={table._id}
-              id={table._id}
-              name={table.number}
-              status={table.status}
-              initials={customerName}
-              seats={table.capacity}
-            />
-          );
-        })}
+      <div className="px-6 md:px-10 py-4 h-[650px] overflow-y-scroll scrollbar-hide">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+          {resData?.data?.data?.map((table) => {
+            const customerName = table?.currentOrder?.customer?.name || "Disponible";
+            return (
+              <TableCard
+                key={table._id}
+                id={table._id}
+                name={table.number}
+                status={table.status}
+                initials={customerName}
+                seats={table.capacity}
+              />
+            );
+          })}
+        </div>
       </div>
 
       <BottomNav />

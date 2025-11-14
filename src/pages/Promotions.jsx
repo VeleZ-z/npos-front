@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getDiscounts } from "../https";
 
@@ -7,7 +8,22 @@ const formatCurrency = (value) =>
     maximumFractionDigits: 0,
   });
 
+const resolveImageSrc = (discount, backendUrl) => {
+  if (!discount) return null;
+  if (discount.imageInline) return discount.imageInline;
+  const raw = discount.imageUrl;
+  if (!raw) return null;
+  if (/^data:/i.test(raw) || /^https?:\/\//i.test(raw)) {
+    return raw;
+  }
+  return backendUrl ? `${backendUrl}${raw}` : raw;
+};
+
 const Promotions = () => {
+  const backendUrl = useMemo(
+    () => (import.meta.env.VITE_BACKEND_URL || "").replace(/\/$/, ""),
+    []
+  );
   const { data, isLoading } = useQuery({
     queryKey: ["public-promotions"],
     queryFn: async () => {
@@ -65,9 +81,9 @@ const Promotions = () => {
               ) : (
                 <p className="text-xs text-[#777]">Sin productos asociados.</p>
               )}
-              {discount.imageUrl && (
+              {resolveImageSrc(discount, backendUrl) && (
                 <img
-                  src={`${import.meta.env.VITE_BACKEND_URL}${discount.imageUrl}`}
+                  src={resolveImageSrc(discount, backendUrl)}
                   alt={discount.name}
                   className="rounded-lg border border-[#333] max-h-48 object-cover"
                 />
