@@ -143,7 +143,7 @@ function Layout() {
         <Route
           path="/dishrank"
           element={
-            <ProtectedRoutes roles={["Admin", "Cashier"]}>
+            <ProtectedRoutes>
               <DishRank />
             </ProtectedRoutes>
           }
@@ -167,7 +167,7 @@ function Layout() {
         <Route
           path="/promociones"
           element={
-            <ProtectedRoutes roles={["Admin", "Cashier"]}>
+            <ProtectedRoutes>
               <Promotions />
             </ProtectedRoutes>
           }
