@@ -23,28 +23,25 @@ const RecentOrders = () => {
     return raw.filter((order) => (order?.items?.length || 0) > 0);
   }, [resData]);
 
-  return (
-    <div className="px-8 mt-6">
-      <div className="bg-[#1a1a1a] w-full h-[450px] rounded-lg">
-        <div className="flex justify-between items-center px-6 py-4">
-          <h1 className="text-[#f5f5f5] text-lg font-semibold tracking-wide">
-            <a href="/orders">Ordenes de los clientes</a>
-          </h1>
-        </div>
-
-        {/* Order list */}
-        <div className="mt-4 px-6 overflow-y-scroll h-[300px] scrollbar-hide">
-          {filteredOrders.length > 0 ? (
-            filteredOrders.map((order) => {
-              return <OrderList key={order._id} order={order} />;
-            })
-          ) : (
-            <p className="col-span-3 text-gray-500">No orders available</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+	return (
+	  <div className="page-card w-full">
+	    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+	      <h1 className="text-lg font-semibold tracking-wide">
+	        <a href="/orders">Ordenes de los clientes</a>
+	      </h1>
+	      <p className="text-sm text-[#ababab]">Actualizadas en tiempo real</p>
+	    </div>
+	    <div className="mt-4 max-h-[320px] overflow-y-auto np-scroll pr-1">
+	      {filteredOrders.length > 0 ? (
+	        filteredOrders.map((order) => (
+	          <OrderList key={order._id} order={order} />
+	        ))
+	      ) : (
+	        <p className="text-gray-500">No orders available</p>
+	      )}
+	    </div>
+	  </div>
+	);
 };
 
 export default RecentOrders;

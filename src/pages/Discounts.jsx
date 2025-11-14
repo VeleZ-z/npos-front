@@ -114,32 +114,35 @@ const Discounts = () => {
     setFlyer(null);
   };
 
-  return (
-    <section className="bg-[#111] min-h-[calc(100vh-5rem)] px-6 py-6 text-white overflow-y-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Gestión de Descuentos</h1>
-          <p className="text-sm text-[#ababab]">
-            Envía flyers y mensajes a todos los usuarios.
-          </p>
-        </div>
-        {form.id && (
-          <button
-            onClick={() => {
-              setForm(initialForm);
-              setFlyer(null);
-            }}
-            className="px-4 py-2 rounded bg-[#1f1f1f]"
-          >
-            Nuevo descuento
-          </button>
-        )}
-      </div>
+	return (
+	  <section className="page-shell text-white">
+	    <div className="page-shell__content space-y-6">
+	      <div className="page-card space-y-6">
+	        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+	          <div>
+	            <h1 className="text-2xl font-bold">Gestión de Descuentos</h1>
+	            <p className="text-sm text-[#ababab]">
+	              Envía flyers y mensajes a todos los usuarios.
+	            </p>
+	          </div>
+	          {form.id && (
+	            <button
+	              onClick={() => {
+	                setForm(initialForm);
+	                setFlyer(null);
+	              }}
+	              type="button"
+	              className="px-4 py-2 rounded bg-[#1f1f1f]"
+	            >
+	              Nuevo descuento
+	            </button>
+	          )}
+	        </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-[#1a1a1a] rounded-xl p-6 grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"
-      >
+	    <form
+	      onSubmit={handleSubmit}
+	      className="grid grid-cols-1 md:grid-cols-2 gap-4"
+	    >
         <div>
           <label className="text-sm text-[#ababab]">Nombre</label>
           <input
@@ -248,10 +251,11 @@ const Discounts = () => {
               : "Crear y enviar"}
           </button>
         </div>
-      </form>
+	    </form>
+	      </div>
 
-      <div className="bg-[#1a1a1a] rounded-xl p-6">
-        <h2 className="text-lg font-semibold mb-4">Historial</h2>
+	      <div className="page-card">
+	      <h2 className="text-lg font-semibold mb-4">Historial</h2>
         {isLoading ? (
           <p className="text-sm text-[#ababab]">Cargando...</p>
         ) : list.length === 0 ? (
@@ -312,9 +316,9 @@ const Discounts = () => {
             ))}
           </div>
         )}
-      </div>
-    </section>
-  );
+	    </div>
+	  </section>
+	);
 };
 
 export default Discounts;

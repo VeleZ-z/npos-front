@@ -21,28 +21,27 @@ const PopularDishes = () => {
       maximumFractionDigits: 0,
     });
 
-  return (
-    <div className="mt-6 pr-6">
-      <div className="bg-[#1a1a1a] w-full rounded-lg">
-        <div className="flex justify-between items-center px-6 py-4">
-          <h1 className="text-[#f5f5f5] text-lg font-semibold tracking-wide">
-            Productos mas populares
-          </h1>
-          <button
-            type="button"
-            onClick={() => navigate("/dishrank")}
-            className="text-[#025cca] text-sm font-semibold hover:underline"
-          >
-            Ver todos
-          </button>
-        </div>
+	return (
+	  <div className="page-card h-full">
+	      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+	        <h1 className="text-[#f5f5f5] text-lg font-semibold tracking-wide">
+	          Productos mas populares
+	        </h1>
+	        <button
+	          type="button"
+	          onClick={() => navigate("/dishrank")}
+	          className="text-[#025cca] text-sm font-semibold hover:underline"
+	        >
+	          Ver todos
+	        </button>
+	      </div>
 
-        <div className="overflow-y-scroll h-[680px] scrollbar-hide pb-6">
+	      <div className="overflow-y-auto max-h-[32rem] scrollbar-hide pb-2">
           {isLoading ? (
             Array.from({ length: 3 }).map((_, idx) => (
               <div
                 key={`skeleton-${idx}`}
-                className="flex items-center gap-4 bg-[#1f1f1f] rounded-[15px] px-6 py-4 mt-4 mx-6 animate-pulse"
+	                className="flex items-center gap-4 bg-[#1f1f1f] rounded-[15px] px-4 py-4 mt-4 animate-pulse"
               >
                 <div className="w-10 h-6 bg-[#2b2b2b] rounded" />
                 <div className="w-[50px] h-[50px] rounded-full bg-[#333]" />
@@ -60,7 +59,7 @@ const PopularDishes = () => {
             products.map((p, idx) => (
               <div
                 key={p.productId || idx}
-                className="flex items-center gap-4 bg-[#1f1f1f] rounded-[15px] px-6 py-4 mt-4 mx-6"
+	                className="flex items-center gap-4 bg-[#1f1f1f] rounded-[15px] px-4 py-4 mt-4"
               >
                 <h1 className="text-[#f5f5f5] font-bold text-xl mr-4">
                   {p.rank.toString().padStart(2, "0")}
@@ -92,10 +91,8 @@ const PopularDishes = () => {
               </div>
             ))
           )}
-        </div>
-      </div>
-    </div>
-  );
+	  </div>
+	);
 };
 
 export default PopularDishes;

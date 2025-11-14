@@ -90,48 +90,55 @@ const PaymentMethods = () => {
     setNewEstado("");
   };
 
-  return (
-    <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden px-10 py-6">
-      <h1 className="text-[#f5f5f5] text-2xl font-bold mb-4">
-        Métodos de Pago
-      </h1>
-      {isAdmin && (
-        <div className="flex items-end gap-3 mb-4">
-          <div>
-            <label className="block text-[#ababab] text-sm mb-1">Nombre</label>
-            <input
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              className="bg-[#1f1f1f] border border-[#444] rounded px-3 py-2 text-white"
-              placeholder="Efectivo / Tarjeta"
-            />
-          </div>
-          <div>
-            <label className="block text-[#ababab] text-sm mb-1">Estado</label>
-            <select
-              value={newEstado}
-              onChange={(e) => setNewEstado(e.target.value)}
-              className="bg-[#1f1f1f] border border-[#444] rounded px-3 py-2 text-white"
-            >
-              <option value="">(por defecto: ACTIVO)</option>
-              {estados.map((e) => (
-                <option key={e._id} value={e._id}>
-                  {e.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button
-            onClick={onCreate}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-          >
-            Crear
-          </button>
-        </div>
-      )}
+	return (
+	  <section className="page-shell text-[#f5f5f5]">
+	    <div className="page-shell__content">
+	      <div className="page-card space-y-6">
+	        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+	          <h1 className="text-2xl font-bold">Métodos de Pago</h1>
+	          <p className="text-sm text-[#ababab]">
+	            Activa o desactiva los métodos aceptados desde cualquier dispositivo.
+	          </p>
+	        </div>
+	        {isAdmin && (
+	          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+	            <div className="flex flex-col">
+	              <label className="block text-[#ababab] text-sm mb-1">Nombre</label>
+	              <input
+	                value={newName}
+	                onChange={(e) => setNewName(e.target.value)}
+	                className="bg-[#111] border border-[#333] rounded px-3 py-2 text-white"
+	                placeholder="Efectivo / Tarjeta"
+	              />
+	            </div>
+	            <div className="flex flex-col">
+	              <label className="block text-[#ababab] text-sm mb-1">Estado</label>
+	              <select
+	                value={newEstado}
+	                onChange={(e) => setNewEstado(e.target.value)}
+	                className="bg-[#111] border border-[#333] rounded px-3 py-2 text-white"
+	              >
+	                <option value="">(por defecto: ACTIVO)</option>
+	                {estados.map((e) => (
+	                  <option key={e._id} value={e._id}>
+	                    {e.name}
+	                  </option>
+	                ))}
+	              </select>
+	            </div>
+	            <div className="flex items-end">
+	              <button
+	                onClick={onCreate}
+	                className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+	              >
+	                Crear
+	              </button>
+	            </div>
+	          </div>
+	        )}
 
-      <div className="overflow-y-auto h-[calc(100%-8rem)]">
-        <table className="w-full text-left text-[#f5f5f5]">
+	        <div className="table-scroll np-scroll">
+	          <table className="min-w-full text-left text-sm">
           <thead className="bg-[#333] text-[#ababab]">
             <tr>
               <th className="p-3">Nombre</th>
@@ -139,27 +146,29 @@ const PaymentMethods = () => {
               {isAdmin && <th className="p-3">Acciones</th>}
             </tr>
           </thead>
-          <tbody>
-            {items.map((pm) => (
-              <Row
-                key={pm._id}
-                pm={pm}
-                estados={estados}
-                isAdmin={isAdmin}
-                onSave={(payload) =>
-                  updateMutation.mutate({ id: pm._id, payload })
-                }
-                onSetEstado={(estado_id) =>
-                  estadoMutation.mutate({ id: pm._id, estado_id })
-                }
-                onDelete={() => deleteMutation.mutate(pm._id)}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
+	          <tbody>
+	            {items.map((pm) => (
+	              <Row
+	                key={pm._id}
+	                pm={pm}
+	                estados={estados}
+	                isAdmin={isAdmin}
+	                onSave={(payload) =>
+	                  updateMutation.mutate({ id: pm._id, payload })
+	                }
+	                onSetEstado={(estado_id) =>
+	                  estadoMutation.mutate({ id: pm._id, estado_id })
+	                }
+	                onDelete={() => deleteMutation.mutate(pm._id)}
+	              />
+	            ))}
+	          </tbody>
+	        </table>
+	        </div>
+	      </div>
+	    </div>
+	  </section>
+	);
 };
 
 const Row = ({ pm, estados, isAdmin, onSave, onSetEstado, onDelete }) => {

@@ -37,11 +37,13 @@ const Profile = () => {
     cumpleanos: form.cumpleanos || null,
   }); };
 
-  return (
-    <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-auto px-10 py-6">
-      <h1 className="text-[#f5f5f5] text-2xl font-bold mb-6">Mi Perfil</h1>
-      <form onSubmit={onSubmit} className="max-w-xl space-y-4">
-        <Input label="Nombre" value={me.name || ''} disabled />
+	return (
+	  <section className="page-shell text-[#f5f5f5]">
+	    <div className="page-shell__content">
+	      <div className="page-card max-w-2xl mx-auto">
+	        <h1 className="text-2xl font-bold mb-6">Mi Perfil</h1>
+	        <form onSubmit={onSubmit} className="space-y-4">
+	        <Input label="Nombre" value={me.name || ''} disabled />
         <Input label="Correo" value={me.email || ''} disabled />
         <Input label="Documento" name="documento" value={form.documento} onChange={onChange} />
         <Input label="Teléfono" name="telefono" value={form.telefono} onChange={onChange} />
@@ -66,16 +68,20 @@ const Profile = () => {
             <p className="text-xs text-[#ababab] mt-1">El cumpleaños solo se puede registrar una vez.</p>
           )}
         </div>
-        <button type="submit" className="bg-yellow-400 text-black font-semibold px-4 py-2 rounded-lg">Guardar</button>
-      </form>
-    </section>
-  );
+	        <button type="submit" className="bg-yellow-400 text-black font-semibold px-4 py-2 rounded-lg w-full sm:w-auto">
+	          Guardar
+	        </button>
+	      </form>
+	      </div>
+	    </div>
+	  </section>
+	);
 };
 
 const Input = ({ label, ...rest }) => (
   <div>
     <label className="block text-[#ababab] mb-1 text-sm">{label}</label>
-    <input className="w-full bg-[#1f1f1f] text-white rounded px-3 py-2" {...rest} />
+	<input className="w-full bg-[#111] border border-[#333] text-white rounded px-3 py-2" {...rest} />
   </div>
 );
 

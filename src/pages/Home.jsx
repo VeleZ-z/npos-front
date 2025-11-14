@@ -39,44 +39,48 @@ const Home = () => {
     document.title = "NPOS | Home";
   }, []);
 
-  return (
-    <section className="bg-[#1f1f1f]  h-[calc(100vh-5rem)] overflow-hidden flex gap-3">
-      {/* Left Div */}
-      <div className="flex-[3]">
-        {isStaff ? (
-          <>
-            <Greetings />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 px-8 mt-8">
-              {miniCards.map((card) => (
-                <MiniCard
-                  key={card.title}
-                  title={card.title}
-                  icon={card.icon}
-                  number={card.value}
-                  change={card.change}
-                  isCurrency={card.isCurrency}
-                  isLoading={statsLoading}
-                />
-              ))}
-            </div>
-            <RecentOrders />
-          </>
-        ) : (
-          <>
-            <CustomerGreeting />
-            <div className="px-8 mt-6">
-              <DiscountsTable />
-            </div>
-          </>
-        )}
-      </div>
-      {/* Right Div */}
-      <div className="flex-[2]">
-        <PopularDishes />
-      </div>
-      <BottomNav />
-    </section>
-  );
+	return (
+	  <section className="page-shell text-[#f5f5f5]">
+	    <div className="page-shell__content">
+	      <div className="flex flex-col xl:flex-row gap-6">
+	        <div className="w-full xl:flex-[3] flex flex-col gap-6">
+	          <div className="page-card">
+	            <Greetings />
+	          </div>
+	          {isStaff ? (
+	            <>
+	              <div className="page-card">
+	                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+	                  {miniCards.map((card) => (
+	                    <MiniCard
+	                      key={card.title}
+	                      title={card.title}
+	                      icon={card.icon}
+	                      number={card.value}
+	                      change={card.change}
+	                      isCurrency={card.isCurrency}
+	                      isLoading={statsLoading}
+	                    />
+	                  ))}
+	                </div>
+	              </div>
+	              <RecentOrders />
+	            </>
+	          ) : (
+	            <div className="page-card space-y-6">
+	              <CustomerGreeting />
+	              <DiscountsTable />
+	            </div>
+	          )}
+	        </div>
+	        <div className="w-full xl:flex-[2]">
+	          <PopularDishes />
+	        </div>
+	      </div>
+	    </div>
+	    <BottomNav />
+	  </section>
+	);
 };
 
 export default Home;

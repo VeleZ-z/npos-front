@@ -144,24 +144,27 @@ const CashDesk = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <section className="bg-[#111] min-h-[calc(100vh-5rem)] px-6 py-6 text-white">
-        <p>Cargando información...</p>
-      </section>
-    );
-  }
+	if (isLoading) {
+	  return (
+	    <section className="page-shell text-white">
+	      <div className="page-shell__content">
+	        <p>Cargando información...</p>
+	      </div>
+	    </section>
+	  );
+	}
 
-  return (
-    <section className="bg-[#111] min-h-[calc(100vh-5rem)] px-6 py-6 text-white overflow-y-auto">
-      <div className="flex flex-wrap justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Relación de Caja</h1>
-          <p className="text-sm text-[#ababab]">
-            Perfil: {data?.cuadre?.openingUser?.name || "Sin asignar"}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
+	return (
+	  <section className="page-shell text-white">
+	    <div className="page-shell__content space-y-6">
+	      <div className="flex flex-wrap justify-between gap-4">
+	      <div>
+	        <h1 className="text-2xl font-bold">Relación de Caja</h1>
+	        <p className="text-sm text-[#ababab]">
+	          Perfil: {data?.cuadre?.openingUser?.name || "Sin asignar"}
+	        </p>
+	      </div>
+	      <div className="flex flex-wrap gap-3">
           <button
             onClick={() => navigate(-1)}
             className="px-4 py-2 rounded bg-[#1f1f1f]"
@@ -199,10 +202,10 @@ const CashDesk = () => {
             </button>
           )}
         </div>
-      </div>
+	      </div>
 
-      {!data?.cuadre && (
-        <div className="bg-[#1a1a1a] rounded-xl p-6 max-w-lg">
+	      {!data?.cuadre && (
+	      <div className="page-card max-w-lg">
           <h2 className="text-lg font-semibold mb-4">
             No hay caja abierta actualmente
           </h2>
@@ -223,11 +226,11 @@ const CashDesk = () => {
             Sólo administradores y cajeros pueden abrir la caja.
           </p>
         </div>
-      )}
+	    )}
 
-      {data?.cuadre && (
-        <>
-          <div className="bg-[#1a1a1a] rounded-xl p-6">
+	    {data?.cuadre && (
+	      <>
+	        <div className="page-card">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-[#ababab]">Estado</p>
@@ -243,23 +246,23 @@ const CashDesk = () => {
               </div>
             </div>
 
-            <div className="mt-6 border border-[#2a2a2a] rounded-lg overflow-hidden">
-              <div className="grid grid-cols-2 bg-[#222] text-sm uppercase text-[#ababab]">
+	            <div className="mt-6 border border-[#2a2a2a] rounded-lg overflow-hidden">
+	              <div className="grid grid-cols-1 sm:grid-cols-2 bg-[#222] text-sm uppercase text-[#ababab]">
                 <span className="px-4 py-3">Detalle</span>
                 <span className="px-4 py-3 text-right">Valor</span>
               </div>
               {summaryRows.map((row) => (
-                <div
-                  key={row.label}
-                  className="grid grid-cols-2 border-t border-[#2a2a2a] text-[#f5f5f5]"
-                >
+	                <div
+	                  key={row.label}
+	                  className="grid grid-cols-1 sm:grid-cols-2 border-t border-[#2a2a2a] text-[#f5f5f5]"
+	                >
                   <span className={`px-4 py-3 ${row.color}`}>{row.label}</span>
                   <span className="px-4 py-3 text-right">
                     $ {formatCurrency(row.value)}
                   </span>
                 </div>
               ))}
-              <div className="grid grid-cols-2 border-t border-[#2a2a2a] bg-[#111] font-semibold text-[#f5f5f5]">
+	              <div className="grid grid-cols-1 sm:grid-cols-2 border-t border-[#2a2a2a] bg-[#111] font-semibold text-[#f5f5f5]">
                 <span className="px-4 py-3">Total Caja</span>
                 <span className="px-4 py-3 text-right text-green-400">
                   $ {formatCurrency(data.cuadre.totals?.totalCaja || 0)}
@@ -268,7 +271,7 @@ const CashDesk = () => {
             </div>
           </div>
 
-          <div className="bg-[#1a1a1a] rounded-xl p-6 mt-6">
+	        <div className="page-card">
             <h3 className="text-lg font-semibold mb-4">Registrar cierre</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -323,8 +326,8 @@ const CashDesk = () => {
         </>
       )}
 
-      {showMovements && data?.movements && (
-        <div className="bg-[#1a1a1a] rounded-xl p-6 mt-6">
+	    {showMovements && data?.movements && (
+	      <div className="page-card">
           <h3 className="text-lg font-semibold mb-4">Movimientos</h3>
           {data.movements.length === 0 ? (
             <p className="text-sm text-[#ababab]">Sin facturas registradas.</p>
@@ -366,9 +369,10 @@ const CashDesk = () => {
             </div>
           )}
         </div>
-      )}
-    </section>
-  );
+	    )}
+	    </div>
+	  </section>
+	);
 };
 
 export default CashDesk;

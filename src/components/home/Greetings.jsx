@@ -23,24 +23,26 @@ const Greetings = () => {
       date.getMinutes()
     ).padStart(2, "0")}:${String(date.getSeconds()).padStart(2, "0")}`;
 
-  return (
-    <div className="flex justify-between items-center px-8 mt-5">
-      <div>
-        <h1 className="text-[#f5f5f5] text-2xl font-semibold tracking-wide">
-          Hola! {userData.name || "TEST USER"} 
-          <br />
-          Nos alegra tenerte de vuelta.
-        </h1>
-        <p className="text-[#ababab] text-sm">
-          Siempre brindamos el mejor servicio a nuestros clientes!
-        </p>
-      </div>
-      <div>
-        <h1 className="text-[#f5f5f5] text-3xl font-bold tracking-wide w-[130px]">{formatTime(dateTime)}</h1>
-        <p className="text-[#ababab] text-sm">{formatDate(dateTime)}</p>
-      </div>
-    </div>
-  );
+	return (
+	  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
+	    <div className="text-center md:text-left">
+	      <h1 className="text-[#f5f5f5] text-2xl font-semibold tracking-wide">
+	        Hola! {userData.name || "TEST USER"} 
+	        <br />
+	        Nos alegra tenerte de vuelta.
+	      </h1>
+	      <p className="text-[#ababab] text-sm mt-1">
+	        Siempre brindamos el mejor servicio a nuestros clientes!
+	      </p>
+	    </div>
+	    <div className="text-center md:text-right">
+	      <h1 className="text-[#f5f5f5] text-3xl font-bold tracking-wide">
+	        {formatTime(dateTime)}
+	      </h1>
+	      <p className="text-[#ababab] text-sm">{formatDate(dateTime)}</p>
+	    </div>
+	  </div>
+	);
 };
 
 export default Greetings;

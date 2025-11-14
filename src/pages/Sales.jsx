@@ -1014,11 +1014,12 @@ const Sales = () => {
     invoiceMutation.mutate(payload);
   };
 
-  return (
-    <>
-      <section className="bg-[#1f1f1f] min-h-[calc(100vh-5rem)] px-6 py-4">
-        {/* Header total sticky */}
-        <div className="sticky top-[5rem] z-10 bg-[#1f1f1f] py-2 mb-2 flex items-center justify-between border-b border-[#2a2a2a]">
+	return (
+	  <>
+	    <section className="page-shell text-[#f5f5f5]">
+	      <div className="page-shell__content space-y-4">
+	      {/* Header total sticky */}
+	      <div className="sticky top-[5rem] z-10 bg-[#1f1f1f] py-3 px-2 mb-2 flex flex-wrap gap-3 items-center justify-between border-b border-[#2a2a2a]">
           <h2 className="text-[#f5f5f5] text-xl font-bold">
             Total $ {(order?.bills?.total || 0).toLocaleString()}
             {order?.orderStatus &&
@@ -1041,8 +1042,8 @@ const Sales = () => {
                 </span>
               ))}
           </h2>
-          {order?._id && (
-            <div className="flex items-center gap-2">
+	          {order?._id && (
+	            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => handlePrint("pending")}
                 disabled={!hasPendingItems}
@@ -1089,25 +1090,26 @@ const Sales = () => {
               )}
             </div>
           )}
-          {canDeleteOrder && (
-            <button
-              onClick={handleDeleteOrder}
-              className="ml-3 rounded px-3 py-2 flex items-center gap-2 bg-red-700 hover:bg-red-800 text-[#f5f5f5]"
-            >
-              <FaTrash /> Eliminar Pedido
-            </button>
-          )}
-        </div>
+	          {canDeleteOrder && (
+	            <button
+	              onClick={handleDeleteOrder}
+	              className="rounded px-3 py-2 flex items-center gap-2 bg-red-700 hover:bg-red-800 text-[#f5f5f5]"
+	            >
+	              <FaTrash /> Eliminar Pedido
+	            </button>
+	          )}
+	        </div>
 
-        <div className="grid grid-cols-12 gap-4">
-          {/* Left: order detail */}
-          <div className="col-span-4 bg-[#1f1f1f] border border-[#2a2a2a] rounded p-3">
-            <div className="flex justify-between text-[#ababab] mb-2">
-              <span>Mesa {selectedMesa?.number ?? "-"}</span>
-              <span>Pedido {order?._id ?? "-"}</span>
-            </div>
-            <table className="w-full text-left text-[#f5f5f5] text-sm">
-              <thead className="text-[#ababab]">
+	        <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
+	          {/* Left: order detail */}
+	          <div className="col-span-12 xl:col-span-4 page-card page-card--light space-y-3">
+	            <div className="flex justify-between text-[#ababab] mb-2">
+	              <span>Mesa {selectedMesa?.number ?? "-"}</span>
+	              <span>Pedido {order?._id ?? "-"}</span>
+	            </div>
+	            <div className="table-scroll np-scroll">
+	            <table className="w-full text-left text-sm">
+	              <thead className="text-[#ababab]">
                 <tr>
                   <th className="py-1">Cant</th>
                   <th className="py-1">Valor</th>
@@ -1194,7 +1196,8 @@ const Sales = () => {
                   );
                 })}
               </tbody>
-            </table>
+	            </table>
+	            </div>
             <div className="mt-4 text-xs text-[#ababab] space-y-1">
               <div>
                 Pedido a:{" "}
@@ -1232,10 +1235,10 @@ const Sales = () => {
           </div>
 
           {/* Right: view switch */}
-          <div className="col-span-8">
-            <div className="flex items-center gap-2 mb-2">
-              <button
-                onClick={() => setView("tables")}
+	          <div className="col-span-12 xl:col-span-8 page-card page-card--light">
+	            <div className="flex flex-wrap items-center gap-2 mb-3">
+	              <button
+	                onClick={() => setView("tables")}
                 className={`px-3 py-1 rounded ${
                   view === "tables"
                     ? "bg-[#2e2e2e] text-[#f5f5f5]"
@@ -1254,21 +1257,21 @@ const Sales = () => {
               >
                 Productos
               </button>
-              {view === "products" && (
-                <div className="ml-auto flex items-center gap-2">
-                  <FaSearch className="text-[#ababab]" />
-                  <input
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Buscar producto"
-                    className="bg-[#1f1f1f] border border-[#333] rounded px-2 py-1 text-[#f5f5f5]"
-                  />
-                </div>
-              )}
+	              {view === "products" && (
+	                <div className="w-full sm:w-auto sm:ml-auto flex flex-col sm:flex-row sm:items-center gap-2">
+	                  <FaSearch className="text-[#ababab]" />
+	                  <input
+	                    value={search}
+	                    onChange={(e) => setSearch(e.target.value)}
+	                    placeholder="Buscar producto"
+	                    className="bg-[#111] border border-[#333] rounded px-2 py-2 text-[#f5f5f5] w-full sm:w-56"
+	                  />
+	                </div>
+	              )}
             </div>
 
-            {view === "tables" ? (
-              <div className="grid grid-cols-5 gap-3">
+	            {view === "tables" ? (
+	              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                 {tables.map((t) => {
                   const isSelected = selectedMesa?._id === t._id;
                   const isBooked = t.status === "Booked";
@@ -1330,7 +1333,7 @@ const Sales = () => {
                 {filteredProds.groups.map((g) => (
                   <div key={g.cat._id}>
                     <h3 className="text-[#ababab] mb-1">{g.cat.name}</h3>
-                    <div className="grid grid-cols-4 gap-3">
+	                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                       {g.items.map((p) => (
                         <button
                           key={p._id}
@@ -1381,7 +1384,7 @@ const Sales = () => {
                 {filteredProds.noCat.length > 0 && (
                   <div>
                     <h3 className="text-[#ababab] mb-1">Sin Categori­a</h3>
-                    <div className="grid grid-cols-4 gap-3">
+	                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                       {filteredProds.noCat.map((p) => (
                         <button
                           key={p._id}
@@ -1433,7 +1436,8 @@ const Sales = () => {
             )}
           </div>
         </div>
-      </section>
+	      </div>
+	      </section>
       {moveItem && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="bg-[#262626] border border-[#333] rounded-lg p-6 w-[420px] max-h-[80vh] overflow-y-auto">

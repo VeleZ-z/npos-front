@@ -28,11 +28,18 @@ const AdminUsers = () => {
     onError: () => enqueueSnackbar('Error actualizando rol', { variant: 'error' })
   });
 
-  return (
-    <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden px-10 py-6">
-      <h1 className="text-[#f5f5f5] text-2xl font-bold mb-4">Usuarios</h1>
-      <div className="overflow-y-auto h-[calc(100%-4rem)]">
-        <table className="w-full text-left text-[#f5f5f5]">
+	return (
+	  <section className="page-shell text-[#f5f5f5]">
+	    <div className="page-shell__content">
+	      <div className="page-card">
+	        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
+	          <h1 className="text-2xl font-bold">Usuarios</h1>
+	          <p className="text-sm text-[#ababab]">
+	            Gestiona documentos, roles y estados desde cualquier dispositivo.
+	          </p>
+	        </div>
+	        <div className="table-scroll np-scroll">
+	          <table className="min-w-full text-left text-sm">
           <thead className="bg-[#333] text-[#ababab]">
             <tr>
               <th className="p-3">Nombre</th>
@@ -45,14 +52,16 @@ const AdminUsers = () => {
               <th className="p-3">Rol</th>
             </tr>
           </thead>
-          <tbody>
-            {users.map(u => (
-              <Row key={u._id} u={u} docTypes={docTypes} estados={estados} roles={roles} onSave={(payload)=> updateMutation.mutate({ id: u._id, payload })} onSetRole={(role)=> roleMutation.mutate({ id: u._id, role })} />
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
+	          <tbody>
+	            {users.map(u => (
+	              <Row key={u._id} u={u} docTypes={docTypes} estados={estados} roles={roles} onSave={(payload)=> updateMutation.mutate({ id: u._id, payload })} onSetRole={(role)=> roleMutation.mutate({ id: u._id, role })} />
+	            ))}
+	          </tbody>
+	        </table>
+	        </div>
+	      </div>
+	    </div>
+	  </section>
   );
 };
 

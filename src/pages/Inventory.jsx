@@ -100,21 +100,26 @@ const Inventory = () => {
 
   const [showAdd, setShowAdd] = useState(false);
 
-  return (
-    <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden px-10 py-6">
-      <h1 className="text-[#f5f5f5] text-2xl font-bold mb-4">
-        Inventario de Productos
-      </h1>
-      <div className="mb-3 flex items-center gap-3">
-        <input
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          placeholder="Buscar por nombre o codigo"
-          className="bg-[#1f1f1f] border border-[#444] rounded px-3 py-2 text-white w-80"
-        />
-      </div>
-      {/* Categori­as horizontales */}
-      <div className="mb-4 overflow-x-auto whitespace-nowrap px-1">
+	return (
+	  <section className="page-shell text-[#f5f5f5]">
+	    <div className="page-shell__content">
+	      <div className="page-card space-y-5">
+	        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+	          <h1 className="text-2xl font-bold">Inventario de Productos</h1>
+	          <p className="text-sm text-[#ababab]">
+	            Administra precios, estados y existencias desde cualquier dispositivo.
+	          </p>
+	        </div>
+	        <div className="flex flex-col md:flex-row md:items-center gap-3">
+	          <input
+	            value={filter}
+	            onChange={(e) => setFilter(e.target.value)}
+	            placeholder="Buscar por nombre o codigo"
+	            className="bg-[#111] border border-[#333] rounded px-3 py-2 text-white w-full md:w-80"
+	          />
+	        </div>
+	        {/* Categori­as horizontales */}
+	    <div className="mb-2 overflow-x-auto whitespace-nowrap px-1">
         <button
           onClick={() => setCategory("")}
           className={`inline-block mr-2 px-3 py-1 rounded ${
@@ -140,7 +145,7 @@ const Inventory = () => {
         ))}
       </div>
 
-      <h2 className="text-[#ababab] text-sm font-semibold mb-2">
+	    <h2 className="text-[#ababab] text-sm font-semibold">
         {category
           ? `Categori­a: ${
               categories.find((c) => String(c._id) === String(category))
@@ -149,9 +154,9 @@ const Inventory = () => {
           : "Categori­a: Todos"}
       </h2>
 
-      <div className="pt-2">
-        <div className="np-scroll overflow-x-auto overflow-y-hidden pb-2">
-          <table className="min-w-full text-left text-[#f5f5f5]">
+	    <div className="pt-2">
+	      <div className="np-scroll table-scroll overflow-y-hidden pb-2">
+	        <table className="min-w-[960px] text-left text-sm">
             <thead className="bg-[#333] text-[#ababab]">
               <tr>
                 <th className="p-3">Producto</th>
@@ -186,18 +191,20 @@ const Inventory = () => {
       </div>
 
       {/* Boton para añadir producto */}
-      {canManageAll && (
-        <button
-          onClick={() => setShowAdd(true)}
-          className="fixed bottom-8 right-8 bg-[#F6B100] hover:bg-yellow-500 text-[#1a1a1a] font-semibold px-5 py-3 rounded-full shadow-lg"
-        >
-          Añadir Producto
-        </button>
-      )}
+	    {canManageAll && (
+	      <button
+	        onClick={() => setShowAdd(true)}
+	        className="fixed bottom-8 right-6 sm:right-8 bg-[#F6B100] hover:bg-yellow-500 text-[#1a1a1a] font-semibold px-5 py-3 rounded-full shadow-lg"
+	      >
+	        Añadir Producto
+	      </button>
+	    )}
 
-      {canManageAll && showAdd && <DishModal onClose={() => setShowAdd(false)} />}
-    </section>
-  );
+	    {canManageAll && showAdd && <DishModal onClose={() => setShowAdd(false)} />}
+	      </div>
+	    </div>
+	  </section>
+	);
 };
 
 const Row = ({
