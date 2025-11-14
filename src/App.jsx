@@ -9,7 +9,6 @@ import PropTypes from "prop-types";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Home,
-  Auth,
   Orders,
   Tables,
   Menu,
@@ -83,12 +82,12 @@ function Layout() {
         <Route
           path="/"
           element={
-            <ProtectedRoutes>
+            <ProtectedRoutes allowGuest>
               <Home />
             </ProtectedRoutes>
           }
         />
-        <Route path="/auth" element={isAuth ? <Navigate to="/" /> : <Auth />} />
+        <Route path="/auth" element={<Navigate to="/" replace />} />
         <Route
           path="/orders"
           element={
@@ -224,10 +223,11 @@ function Layout() {
   );
 }
 
-function ProtectedRoutes({ children, roles }) {
+function ProtectedRoutes({ children, roles, allowGuest }) {
   const { isAuth, role } = useSelector((state) => state.user);
   if (!isAuth) {
-    return <Navigate to="/auth" />;
+    if (allowGuest) return children;
+    return <Navigate to="/" replace />;
   }
   if (Array.isArray(roles) && roles.length > 0) {
     const ok = roles
@@ -243,10 +243,12 @@ function ProtectedRoutes({ children, roles }) {
 ProtectedRoutes.propTypes = {
   children: PropTypes.node.isRequired,
   roles: PropTypes.arrayOf(PropTypes.string),
+  allowGuest: PropTypes.bool,
 };
 
 ProtectedRoutes.defaultProps = {
   roles: undefined,
+  allowGuest: false,
 };
 
 function App() {
