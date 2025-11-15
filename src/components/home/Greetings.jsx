@@ -27,7 +27,7 @@ const Greetings = () => {
 	  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
 	    <div className="text-center md:text-left">
 	      <h1 className="text-[#f5f5f5] text-2xl font-semibold tracking-wide">
-	        Hola! {userData.name || "TEST USER"} 
+	        Hola! {userData.name || "Cliente Nativhos"} 
 	        <br />
 	        Nos alegra tenerte de vuelta.
 	      </h1>
