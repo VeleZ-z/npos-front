@@ -23,7 +23,7 @@ export const updateTable = ({ tableId, ...tableData }) =>
 
 // Order Endpoints
 export const addOrder = (data) => axiosWrapper.post("/api/order/", data);
-export const getOrders = () => axiosWrapper.get("/api/order");
+export const getOrders = () => axiosWrapper.get("/api/order", { params: { guest: true } });
 export const updateOrderStatus = ({ orderId, orderStatus, tableId }) =>
   axiosWrapper.put(`/api/order/${orderId}`, { orderStatus, tableId });
 export const deleteOrder = (orderId) =>
@@ -49,13 +49,13 @@ export const markOrderItemsPrinted = (orderId, items) => axiosWrapper.post(`/api
 
 // Category Endpoints
 export const addCategory = (data) => axiosWrapper.post("/api/category", data);
-export const getCategories = () => axiosWrapper.get("/api/category");
+export const getCategories = () => axiosWrapper.get("/api/category", { params: { guest: true } });
 export const updateCategory = (id, data) => axiosWrapper.put(`/api/category/${id}`, data);
 export const deleteCategory = (id) => axiosWrapper.delete(`/api/category/${id}`);
 
 // Product Endpoints
 export const addProduct = (data) => axiosWrapper.post("/api/product", data);
-export const getProducts = () => axiosWrapper.get("/api/product");
+export const getProducts = () => axiosWrapper.get("/api/product", { params: { guest: true } });
 export const updateProduct = (id, data) => axiosWrapper.put(`/api/product/${id}`, data);
 export const deleteProduct = (id) => axiosWrapper.delete(`/api/product/${id}`);
 export const updateProductStockState = (id, data) =>

@@ -13,7 +13,8 @@ const Bill = () => {
   const dispatch = useDispatch();
   const customerData = useSelector((state) => state.customer);
   const cartData = useSelector((state) => state.cart);
-  const role = useSelector((state) => state.user.role);
+  const { role, isAuth } = useSelector((state) => state.user);
+  const isGuest = !isAuth;
   const navigate = useNavigate();
   const total = useSelector(getTotalPrice);
   const taxRaw = useMemo(() => {
@@ -39,7 +40,7 @@ const Bill = () => {
         phone: customerData.customerPhone,
         guests: customerData.guests,
       },
-      // El backend forzará POR_APROBAR si es cliente
+      guest: isGuest,
       orderStatus: "PENDIENTE",
       bills: {
         subtotal: net,
@@ -86,10 +87,10 @@ const Bill = () => {
       enqueueSnackbar("Orden creada!", { variant: "success" });
       // Redirigir segun rol
       const r = String(role || '').toLowerCase();
-      if (r === 'customer') {
+      if (r === 'customer' && isAuth) {
         navigate('/orders');
       } else {
-        navigate('/cashier');
+        navigate('/');
       }
     },
     onError: () => {
@@ -149,8 +150,6 @@ const Bill = () => {
 };
 
 export default Bill;
-
-
 
 
 

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTodayStats } from "../https";
 
-export const useTodayStats = () =>
+export const useTodayStats = ({ enabled = true } = {}) =>
   useQuery({
     queryKey: ["today-stats"],
     queryFn: async () => {
@@ -9,6 +9,7 @@ export const useTodayStats = () =>
       return res?.data?.data || null;
     },
     staleTime: 60 * 1000,
+    enabled,
   });
 
 export default useTodayStats;

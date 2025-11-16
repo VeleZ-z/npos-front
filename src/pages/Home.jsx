@@ -13,7 +13,7 @@ import useTodayStats from "../hooks/useTodayStats";
 const Home = () => {
   const { role } = useSelector((state) => state.user);
   const isStaff = role === "Admin" || role === "Cashier";
-  const { data: todayStats, isLoading: statsLoading } = useTodayStats();
+  const { data: todayStats, isLoading: statsLoading } = useTodayStats({ enabled: isStaff });
 
   const miniCards = useMemo(
     () => [

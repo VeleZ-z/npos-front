@@ -1,4 +1,5 @@
 import axios from "axios";
+import { isGuest } from "../utils/session";
 
 export const axiosWrapper = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -17,6 +18,10 @@ axiosWrapper.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     } else if (config.headers && config.headers.Authorization) {
       delete config.headers.Authorization;
+    }
+    // Permitir lectura pública para invitados en endpoints que soportan modo público
+    if (!token && isGuest() && config.method?.toLowerCase() === "get") {
+      config.headers["X-Guest"] = "1";
     }
     return config;
   },

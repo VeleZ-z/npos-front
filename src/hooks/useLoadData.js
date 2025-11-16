@@ -12,6 +12,8 @@ const useLoadData = () => {
       const token = localStorage.getItem("token");
 
       if (!token) {
+        // Guest mode
+        dispatch(removeUser());
         setIsLoading(false);
         return;
       }

@@ -31,13 +31,14 @@ const Orders = () => {
       document.title = "NPOS | Orders"
     }, [])
 
-  const { role } = useSelector((state) => state.user);
+  const { role, isAuth } = useSelector((state) => state.user);
   const { data: resData, isError } = useQuery({
     queryKey: ["orders"],
     queryFn: async () => {
       return await getOrders();
     },
-    placeholderData: keepPreviousData
+    placeholderData: keepPreviousData,
+    enabled: isAuth,
   })
 
   if(isError) {
