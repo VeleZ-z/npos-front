@@ -11,7 +11,7 @@ import {
   updateOrderStatus,
   getStates,
   getTables,
-} from "../../https/index";
+} from "../../https";
 import { formatDateAndTime } from "../../utils";
 
 const STATUS_REQUIRING_TABLE = new Set(["PENDIENTE", "LISTO", "READY"]);
@@ -23,18 +23,14 @@ const DATE_FILTERS = [
 ];
 
 const RecentOrders = () => {
-  const queryClient = useQueryClient();
-  const [tablePrompt, setTablePrompt] = useState(null);
+  const qc = useQueryClient();
+  const { enqueueSnackbar } = useSnackbar();
   const [statusFilter, setStatusFilter] = useState("all");
   const [rangeFilter, setRangeFilter] = useState("all");
   const [customRange, setCustomRange] = useState({ from: "", to: "" });
+  const [tablePrompt, setTablePrompt] = useState(null);
 
-  const orderStatusUpdateMutation = useMutation({
-    mutationFn: ({ orderId, orderStatus, tableId }) =>
-      updateOrderStatus({ orderId, orderStatus, tableId }),
-  });
-
-  const { data: resData, isError } = useQuery({
+  const { data: ordersRes, isError } = useQuery({
     queryKey: ["orders"],
     queryFn: async () => await getOrders(),
     placeholderData: keepPreviousData,
@@ -66,11 +62,9 @@ const RecentOrders = () => {
     [tables]
   );
 
-  const { enqueueSnackbar } = useSnackbar();
-
   useEffect(() => {
     if (isError) {
-      enqueueSnackbar("Something went wrong!", { variant: "error" });
+      enqueueSnackbar("Error cargando órdenes", { variant: "error" });
     }
   }, [enqueueSnackbar, isError]);
 
@@ -115,38 +109,38 @@ const RecentOrders = () => {
     [tables]
   );
 
+  const mutation = useMutation({
+    mutationFn: ({ orderId, orderStatus, tableId }) =>
+      updateOrderStatus({ orderId, orderStatus, tableId }),
+    onSuccess: () => {
+      qc.invalidateQueries(["orders"]);
+    },
+  });
+
   const commitStatusChange = useCallback(
     (order, status, tableId) => {
       if (!order?._id) return;
-      orderStatusUpdateMutation.mutate(
+      mutation.mutate(
         { orderId: order._id, orderStatus: status, tableId },
         {
-          onSuccess: () => {
-            enqueueSnackbar("Order status updated successfully!", {
-              variant: "success",
-            });
-            queryClient.invalidateQueries(["orders"]);
-            setTablePrompt(null);
-          },
-          onError: (error) => {
-            const responseStatus = error?.response?.status;
+          onSuccess: () => setTablePrompt(null),
+          onError: (err) => {
+            const responseStatus = err?.response?.status;
             if (responseStatus === 409) {
               enqueueSnackbar(
                 "La mesa seleccionada está ocupada. Elige otra mesa.",
-                {
-                  variant: "warning",
-                }
+                { variant: "warning" }
               );
               setTablePrompt({ order, status, reason: "occupied" });
             } else if (responseStatus === 400 && requiresTable(status)) {
               enqueueSnackbar(
-                error?.response?.data?.message ||
+                err?.response?.data?.message ||
                   "Selecciona una mesa para continuar.",
                 { variant: "info" }
               );
               setTablePrompt({ order, status, reason: "missing" });
             } else {
-              enqueueSnackbar("Failed to update order status!", {
+              enqueueSnackbar("No se pudo actualizar la orden", {
                 variant: "error",
               });
             }
@@ -154,7 +148,7 @@ const RecentOrders = () => {
         }
       );
     },
-    [enqueueSnackbar, orderStatusUpdateMutation, queryClient, requiresTable]
+    [enqueueSnackbar, mutation, requiresTable]
   );
 
   const handleStatusChange = useCallback(
@@ -162,7 +156,6 @@ const RecentOrders = () => {
       const status = normalizeStatus(nextStatus);
       if (!order?._id) return;
       const isCustomerOrder = Boolean(order?.customer?.userId);
-
       if (isCustomerOrder && requiresTable(status)) {
         const tableRecord = findTableRecordForOrder(order);
         if (!tableRecord) {
@@ -175,7 +168,6 @@ const RecentOrders = () => {
         commitStatusChange(order, status, tableRecord._id);
         return;
       }
-
       commitStatusChange(order, status);
     },
     [
@@ -187,14 +179,9 @@ const RecentOrders = () => {
     ]
   );
 
-  const currentPromptTable = useMemo(
-    () => (tablePrompt ? findTableRecordForOrder(tablePrompt.order) : null),
-    [tablePrompt, findTableRecordForOrder]
-  );
-
   const filteredOrders = useMemo(() => {
-    const base = Array.isArray(resData?.data?.data) ? resData.data.data : [];
-    const withItems = base.filter((order) => (order?.items?.length || 0) > 0);
+    const base = Array.isArray(ordersRes?.data?.data) ? ordersRes.data.data : [];
+    const withItems = base.filter((o) => (o?.items?.length || 0) > 0);
     let startRange = null;
     let endRange = null;
     if (rangeFilter === "custom") {
@@ -212,17 +199,17 @@ const RecentOrders = () => {
     return withItems.filter((order) => {
       const orderDate = order?.orderDate ? new Date(order.orderDate) : null;
       if (!orderDate || Number.isNaN(orderDate.getTime())) return false;
-      const status = normalizeStatus(order.orderStatus);
-      if (statusFilter !== "all" && status !== statusFilter) return false;
       if (startRange && orderDate < startRange) return false;
       if (endRange) {
         const endOfDay = new Date(endRange);
         endOfDay.setHours(23, 59, 59, 999);
         if (orderDate > endOfDay) return false;
       }
+      const status = normalizeStatus(order.orderStatus);
+      if (statusFilter !== "all" && status !== statusFilter) return false;
       return true;
     });
-  }, [resData, rangeFilter, customRange, statusFilter, normalizeStatus]);
+  }, [ordersRes, rangeFilter, customRange, statusFilter, normalizeStatus]);
 
   return (
     <>
@@ -303,16 +290,17 @@ const RecentOrders = () => {
               "-";
             const totalStr = Number(order.bills?.total || 0).toLocaleString();
             const orderDate = order?.orderDate ? new Date(order.orderDate) : null;
+            const orderId = order._id || order.id;
 
             return (
               <div
-                key={order._id}
+                key={orderId}
                 className="bg-[#1f1f1f] border border-[#2a2a2a] rounded-xl p-4 flex flex-col gap-3"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm text-[#ababab]">
-                      #{order.orderNumber || order._id}
+                      #{order.orderNumber || orderId}
                     </p>
                     <h3 className="text-lg font-semibold">
                       {order.customer?.name || "Cliente"}
@@ -352,6 +340,7 @@ const RecentOrders = () => {
           <p className="text-sm text-[#ababab] mt-4">No hay órdenes para este filtro.</p>
         )}
       </div>
+
       {tablePrompt && (
         <div className="fixed inset-0 bg-black/60 z-40 flex items-center justify-center px-4">
           <div className="bg-[#262626] border border-[#333] rounded-lg p-6 w-[460px] max-w-full">
@@ -363,19 +352,22 @@ const RecentOrders = () => {
                 ? "La mesa seleccionada está ocupada. Elige a qué mesa mover la orden."
                 : "Esta orden no tiene una mesa asignada. Selecciona una mesa para continuar."}
             </p>
-            {currentPromptTable ? (
-              <p className="text-[#f5f5f5] text-sm mb-3">
-                Mesa actual:{" "}
-                <span className="font-semibold">
-                  Mesa {String(currentPromptTable.number).padStart(2, "0")}
-                </span>{" "}
-                (
-                {currentPromptTable.status === "Booked"
-                  ? "ocupada"
-                  : currentPromptTable.status.toLowerCase()}
-                )
-              </p>
-            ) : null}
+            {(() => {
+              const current = findTableRecordForOrder(tablePrompt.order);
+              return current ? (
+                <p className="text-[#f5f5f5] text-sm mb-3">
+                  Mesa actual:{" "}
+                  <span className="font-semibold">
+                    Mesa {String(current.number).padStart(2, "0")}
+                  </span>{" "}
+                  (
+                  {current.status === "Booked"
+                    ? "ocupada"
+                    : current.status.toLowerCase()}
+                  )
+                </p>
+              ) : null;
+            })()}
             <div className="grid grid-cols-3 gap-3 max-h-60 overflow-y-auto">
               {tables.length === 0 ? (
                 <p className="col-span-3 text-[#ababab] text-sm">
@@ -384,11 +376,10 @@ const RecentOrders = () => {
               ) : (
                 tables.map((tbl) => {
                   const disabled = tbl.status === "Booked";
-                  const isAvailable = !disabled;
                   return (
                     <button
                       key={tbl._id}
-                      disabled={disabled || orderStatusUpdateMutation.isPending}
+                      disabled={disabled || mutation.isPending}
                       onClick={() =>
                         commitStatusChange(
                           tablePrompt.order,
@@ -406,7 +397,7 @@ const RecentOrders = () => {
                         Mesa {String(tbl.number).padStart(2, "0")}
                       </div>
                       <div className="text-xs">
-                        {isAvailable ? "Disponible" : "Ocupada"}
+                        {disabled ? "Ocupada" : "Disponible"}
                       </div>
                     </button>
                   );
@@ -419,7 +410,7 @@ const RecentOrders = () => {
                 <button
                   onClick={() => setTablePrompt(null)}
                   className="px-4 py-2 bg-[#333] hover:bg-[#3a3a3a] text-[#f5f5f5] rounded"
-                  disabled={orderStatusUpdateMutation.isPending}
+                  disabled={mutation.isPending}
                 >
                   Cancelar
                 </button>
