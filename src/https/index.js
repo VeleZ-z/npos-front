@@ -22,7 +22,7 @@ export const updateTable = ({ tableId, ...tableData }) =>
 
 
 // Order Endpoints
-export const addOrder = (data) => axiosWrapper.post("/api/order/", data);
+export const addOrder = (data, opts = {}) => axiosWrapper.post("/api/order", data, { params: { guest: true, ...(opts.params||{}) } });
 export const getOrders = () => axiosWrapper.get("/api/order", { params: { guest: true } });
 export const updateOrderStatus = ({ orderId, orderStatus, tableId }) =>
   axiosWrapper.put(`/api/order/${orderId}`, { orderStatus, tableId });

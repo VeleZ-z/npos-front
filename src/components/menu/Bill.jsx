@@ -72,23 +72,31 @@ const Bill = () => {
   };
 
   const orderMutation = useMutation({
-    mutationFn: (reqData) => addOrder(reqData),
+    mutationFn: (reqData) =>
+      addOrder(reqData, { params: isGuest ? { guest: true } : {} }),
     onSuccess: (resData) => {
       const { data } = resData.data;
       setOrderInfo(data);
-      const tableData = {
-        status: "Booked",
-        orderId: data._id,
-        tableId: data.table,
-      };
-      setTimeout(() => {
-        tableUpdateMutation.mutate(tableData);
-      }, 1500);
+      if (isAuth) {
+        const tableData = {
+          status: "Booked",
+          orderId: data._id,
+          tableId: data.table,
+        };
+        setTimeout(() => {
+          tableUpdateMutation.mutate(tableData);
+        }, 1500);
+      } else {
+        dispatch(removeCustomer());
+        dispatch(removeAllItems());
+      }
       enqueueSnackbar("Orden creada!", { variant: "success" });
       // Redirigir segun rol
       const r = String(role || '').toLowerCase();
       if (r === 'customer' && isAuth) {
         navigate('/orders');
+      } else if (r === 'admin' || r === 'cashier') {
+        navigate('/cashier');
       } else {
         navigate('/');
       }
@@ -150,9 +158,6 @@ const Bill = () => {
 };
 
 export default Bill;
-
-
-
 
 
 
