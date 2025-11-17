@@ -13,6 +13,7 @@ import {
   getTables,
 } from "../../https";
 import { formatDateAndTime } from "../../utils";
+import { useSelector } from "react-redux";
 
 const STATUS_REQUIRING_TABLE = new Set(["PENDIENTE", "LISTO", "READY"]);
 const DATE_FILTERS = [
@@ -25,6 +26,10 @@ const DATE_FILTERS = [
 const RecentOrders = () => {
   const qc = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
+  const { role } = useSelector((state) => state.user);
+  const roleLower = String(role || "").toLowerCase();
+  const isAdmin = roleLower === "admin";
+  const isStaff = isAdmin || roleLower === "cashier";
   const [statusFilter, setStatusFilter] = useState("all");
   const [rangeFilter, setRangeFilter] = useState("all");
   const [customRange, setCustomRange] = useState({ from: "", to: "" });
@@ -120,6 +125,17 @@ const RecentOrders = () => {
   const commitStatusChange = useCallback(
     (order, status, tableId) => {
       if (!order?._id) return;
+      if (!isStaff) return;
+      const currentStatus = normalizeStatus(order.orderStatus);
+      if (currentStatus === "PAGADO" || currentStatus === "CERRADO") {
+        return;
+      }
+      if (normalizeStatus(status) === "CERRADO" && !isAdmin) {
+        enqueueSnackbar("Solo un administrador puede cerrar una orden.", {
+          variant: "warning",
+        });
+        return;
+      }
       mutation.mutate(
         { orderId: order._id, orderStatus: status, tableId },
         {
@@ -153,6 +169,15 @@ const RecentOrders = () => {
     (order, nextStatus) => {
       const status = normalizeStatus(nextStatus);
       if (!order?._id) return;
+      if (!isStaff) return;
+      const currentStatus = normalizeStatus(order.orderStatus);
+      if (currentStatus === "PAGADO" || currentStatus === "CERRADO") return;
+      if (status === "CERRADO" && !isAdmin) {
+        enqueueSnackbar("Solo un administrador puede cerrar una orden.", {
+          variant: "warning",
+        });
+        return;
+      }
       const isCustomerOrder = Boolean(order?.customer?.userId);
       if (isCustomerOrder && requiresTable(status)) {
         const tableRecord = findTableRecordForOrder(order);
@@ -307,17 +332,26 @@ const RecentOrders = () => {
                       Mesa {tableLabel} · {order.items?.length || 0} ítems
                     </p>
                   </div>
-                  <select
-                    value={status}
-                    onChange={(e) => handleStatusChange(order, e.target.value)}
-                    className="bg-[#2b2b2b] border border-[#444] rounded px-2 py-1 text-sm text-[#f5f5f5]"
-                  >
-                    {orderStates.map((st) => (
-                      <option key={st} value={st}>
-                        {st}
-                      </option>
-                    ))}
-                  </select>
+                  {isStaff ? (
+                    <select
+                      value={status}
+                      onChange={(e) => handleStatusChange(order, e.target.value)}
+                      className="bg-[#2b2b2b] border border-[#444] rounded px-2 py-1 text-sm text-[#f5f5f5]"
+                      disabled={
+                        status === "PAGADO" ||
+                        status === "CERRADO" ||
+                        mutation.isPending
+                      }
+                    >
+                      {orderStates.map((st) => (
+                        <option key={st} value={st}>
+                          {st}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <span className="text-sm text-[#ababab]">{status}</span>
+                  )}
                 </div>
                 <div className="text-sm text-[#f5f5f5]">
                   {orderDate ? formatDateAndTime(orderDate) : "-"}

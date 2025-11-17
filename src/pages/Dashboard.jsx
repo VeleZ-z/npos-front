@@ -60,6 +60,13 @@ const Dashboard = () => {
 
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           {tabs.map((tab) => {
+            const handleTab = () => {
+              if (tab === "Pidiendo") {
+                navigate("/orders");
+                return;
+              }
+              setActiveTab(tab);
+            };
             return (
               <button
                 key={tab}
@@ -69,7 +76,7 @@ const Dashboard = () => {
                     ? "bg-[#262626]"
                     : "bg-[#1a1a1a] hover:bg-[#262626]"
                 }`}
-                onClick={() => setActiveTab(tab)}
+                onClick={handleTab}
               >
                 {tab}
               </button>
