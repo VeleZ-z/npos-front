@@ -28,9 +28,9 @@ const AdminUsers = () => {
     onError: () => enqueueSnackbar('Error actualizando rol', { variant: 'error' })
   });
 
-	return (
-	  <section className="page-shell text-[#f5f5f5]">
-	    <div className="page-shell__content">
+  return (
+    <section className="page-shell text-[#f5f5f5]">
+      <div className="page-shell__content px-1 sm:px-0">
 	      <div className="page-card">
 	        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
 	          <h1 className="text-2xl font-bold">Usuarios</h1>

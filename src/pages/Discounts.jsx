@@ -129,9 +129,9 @@ const Discounts = () => {
     setFlyer(null);
   };
 
-	return (
-	  <section className="page-shell text-white">
-	    <div className="page-shell__content space-y-6">
+  return (
+    <section className="page-shell text-white">
+      <div className="page-shell__content space-y-6 px-1 sm:px-0">
 	      <div className="page-card space-y-6">
 	        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 	          <div>

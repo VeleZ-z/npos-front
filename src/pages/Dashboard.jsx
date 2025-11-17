@@ -41,8 +41,8 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="bg-[#1f1f1f] min-h-[calc(100vh-5rem)] overflow-y-auto pb-10">
-      <div className="container mx-auto flex items-center justify-between py-14 px-6 md:px-4">
+    <div className="bg-[#1f1f1f] min-h-[calc(100vh-5rem)] overflow-y-auto pb-10 px-3 sm:px-4 md:px-6">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-8">
         <div className="flex items-center gap-3">
           {(role === "Admin" ? buttons : []).map(({ label, icon, action }) => {
             return (
@@ -77,28 +77,30 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {activeTab === "Metrics" && <Metrics />}
-      {activeTab === "Pidiendo" && <RecentOrders />}
-      {activeTab === "Proveedores" && <Providers />}
-      {activeTab === "Facturacion" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 px-8 mt-8">
-          <MiniCard
-            title="Ganancias"
-            icon={<BsCashCoin />}
-            number={todayStats?.salesToday ?? 0}
-            change={todayStats?.salesChangePct ?? 0}
-            isCurrency
-            isLoading={statsLoading}
-          />
-          <MiniCard
-            title="Comandas Activas"
-            icon={<GrInProgress />}
-            number={todayStats?.activeToday ?? 0}
-            change={todayStats?.activeChangePct ?? 0}
-            isLoading={statsLoading}
-          />
-        </div>
-      )}
+      <div className="max-w-6xl mx-auto px-1 sm:px-0">
+        {activeTab === "Metrics" && <Metrics />}
+        {activeTab === "Pidiendo" && <RecentOrders />}
+        {activeTab === "Proveedores" && <Providers />}
+        {activeTab === "Facturacion" && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+            <MiniCard
+              title="Ganancias"
+              icon={<BsCashCoin />}
+              number={todayStats?.salesToday ?? 0}
+              change={todayStats?.salesChangePct ?? 0}
+              isCurrency
+              isLoading={statsLoading}
+            />
+            <MiniCard
+              title="Comandas Activas"
+              icon={<GrInProgress />}
+              number={todayStats?.activeToday ?? 0}
+              change={todayStats?.activeChangePct ?? 0}
+              isLoading={statsLoading}
+            />
+          </div>
+        )}
+      </div>
 
       {isTableModalOpen && <Modal setIsTableModalOpen={setIsTableModalOpen} />}
       {isCategoryModalOpen && <CategoryModal onClose={() => setIsCategoryModalOpen(false)} />}
