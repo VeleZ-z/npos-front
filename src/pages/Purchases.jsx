@@ -26,6 +26,7 @@ const Purchases = () => {
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editPurchase, setEditPurchase] = useState(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     document.title = "NPOS | Compras";
@@ -40,6 +41,15 @@ const Purchases = () => {
     () => (Array.isArray(resData?.data?.data) ? resData.data.data : []),
     [resData]
   );
+  const filteredPurchases = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) return purchases;
+    return purchases.filter((p) => {
+      const name = (p.name || "").toLowerCase();
+      const provider = (p.providerName || p.provider || "").toLowerCase();
+      return name.includes(term) || provider.includes(term);
+    });
+  }, [purchases, search]);
 
   const { data: provRes } = useQuery({
     queryKey: ["providers"],
@@ -87,6 +97,15 @@ const Purchases = () => {
       </div>
 
       <div className="px-10 overflow-y-auto h-[calc(100%-7rem)]">
+        <div className="mb-3 flex flex-wrap gap-3">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por nombre o proveedor"
+            className="bg-[#111] border border-[#333] rounded px-3 py-2 text-white w-full sm:w-80"
+          />
+        </div>
         <table className="w-full text-left text-[#f5f5f5]">
           <thead className="bg-[#333] text-[#ababab]">
             <tr>
@@ -100,7 +119,7 @@ const Purchases = () => {
             </tr>
           </thead>
           <tbody>
-            {purchases.map((p) => (
+            {filteredPurchases.map((p) => (
               <Row
                 key={p._id}
                 p={p}

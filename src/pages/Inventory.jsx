@@ -117,33 +117,33 @@ const Inventory = () => {
 	            placeholder="Buscar por nombre o codigo"
 	            className="bg-[#111] border border-[#333] rounded px-3 py-2 text-white w-full md:w-80"
 	          />
-	        </div>
-	        {/* Categori­as horizontales */}
-	    <div className="mb-2 overflow-x-auto whitespace-nowrap px-1">
-        <button
-          onClick={() => setCategory("")}
-          className={`inline-block mr-2 px-3 py-1 rounded ${
-            category === ""
-              ? "bg-[#2e2e2e] text-[#f5f5f5]"
-              : "bg-[#1f1f1f] text-[#ababab] border border-[#333]"
-          }`}
-        >
-          Todos
-        </button>
-        {categories.map((c) => (
+        </div>
+        {/* Categori­as horizontales */}
+        <div className="mb-2 overflow-x-auto whitespace-nowrap px-1 flex items-center gap-2">
           <button
-            key={c._id}
-            onClick={() => setCategory(String(c._id))}
-            className={`inline-block mr-2 px-3 py-1 rounded ${
-              String(category) === String(c._id)
-                ? "bg-[#2e2e2e] text-[#f5f5f5]"
-                : "bg-[#1f1f1f] text-[#ababab] border border-[#333]"
+            onClick={() => setCategory("")}
+            className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${
+              category === ""
+                ? "bg-[#2F974D] text-[#0f2f1c]"
+                : "bg-[#2b2b2b] text-[#f5f5f5]"
             }`}
           >
-            {c.name}
+            Todos
           </button>
-        ))}
-      </div>
+          {categories.map((c) => (
+            <button
+              key={c._id}
+              onClick={() => setCategory(String(c._id))}
+              className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${
+                String(category) === String(c._id)
+                  ? "bg-[#2F974D] text-[#0f2f1c]"
+                  : "bg-[#2b2b2b] text-[#f5f5f5]"
+              }`}
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
 
 	    <h2 className="text-[#ababab] text-sm font-semibold">
         {category

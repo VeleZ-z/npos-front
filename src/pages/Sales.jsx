@@ -1017,10 +1017,18 @@ const Sales = () => {
 	return (
 	  <>
 	    <section className="page-shell text-[#f5f5f5]">
-	      <div className="page-shell__content space-y-4">
-	      {/* Header total sticky */}
-	      <div className="sticky top-[5rem] z-10 bg-[#1f1f1f] py-3 px-2 mb-2 flex flex-wrap gap-3 items-center justify-between border-b border-[#2a2a2a]">
-          <h2 className="text-[#f5f5f5] text-xl font-bold">
+      <div className="page-shell__content space-y-4">
+      {/* Header total sticky */}
+      <div className="sticky top-[5rem] z-10 bg-[#1f1f1f] py-3 px-2 mb-2 flex flex-wrap gap-3 items-center justify-between border-b border-[#2a2a2a]">
+          <button
+            type="button"
+            onClick={() => {
+              setView("tables");
+              setSelectedMesa(null);
+            }}
+            className="text-left text-[#f5f5f5] text-xl font-bold hover:text-[#2F974D] transition-colors"
+            title="Volver a las mesas"
+          >
             Total $ {(order?.bills?.total || 0).toLocaleString()}
             {order?.orderStatus &&
               (isStaff ? (
@@ -1041,7 +1049,7 @@ const Sales = () => {
                   ({String(order.orderStatus).toUpperCase()})
                 </span>
               ))}
-          </h2>
+          </button>
 	          {order?._id && (
 	            <div className="flex flex-wrap items-center gap-2">
               <button

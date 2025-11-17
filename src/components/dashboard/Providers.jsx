@@ -11,6 +11,7 @@ const Providers = () => {
   const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState(false);
   const [editRow, setEditRow] = useState(null);
+  const [search, setSearch] = useState("");
 
   const { data: resData } = useQuery({
     queryKey: ["providers"],
@@ -18,6 +19,17 @@ const Providers = () => {
     placeholderData: keepPreviousData,
   });
   const providers = resData?.data?.data || [];
+  const filteredProviders = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) return providers;
+    return providers.filter((p) => {
+      return (
+        (p.name || "").toLowerCase().includes(term) ||
+        (p.contact || "").toLowerCase().includes(term) ||
+        (p.email || "").toLowerCase().includes(term)
+      );
+    });
+  }, [providers, search]);
 
   const createMutation = useMutation({
     mutationFn: (payload) => addProvider(payload),
@@ -40,16 +52,25 @@ const Providers = () => {
 
   return (
     <div className="container mx-auto px-8">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
         <h2 className="text-[#f5f5f5] text-xl font-semibold">Proveedores</h2>
-        {isAdmin && (
-          <button
-            onClick={() => setShowModal(true)}
-            className="bg-[#2F974D] hover:bg-[#277f41] text-[#1a1a1a] font-semibold px-6 py-2 rounded-lg"
-          >
-            Agregar
-          </button>
-        )}
+        <div className="flex items-center gap-3 flex-wrap">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por nombre, contacto o correo"
+            className="bg-[#1f1f1f] border border-[#333] rounded px-3 py-2 text-white w-64"
+          />
+          {isAdmin && (
+            <button
+              onClick={() => setShowModal(true)}
+              className="bg-[#2F974D] hover:bg-[#277f41] text-[#1a1a1a] font-semibold px-6 py-2 rounded-lg"
+            >
+              Agregar
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="overflow-x-auto bg-[#262626] rounded-lg">
@@ -64,7 +85,7 @@ const Providers = () => {
             </tr>
           </thead>
           <tbody>
-            {providers.map((p) => (
+            {filteredProviders.map((p) => (
               <tr key={p._id} className="border-b border-gray-600 hover:bg-[#333]">
                 <td className="p-3">{p.name}</td>
                 <td className="p-3">{p.contact}</td>

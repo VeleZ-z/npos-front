@@ -9,7 +9,19 @@ const AdminUsers = () => {
   useEffect(()=> { document.title = 'NPOS | Usuarios'; }, []);
 
   const { data: usersRes } = useQuery({ queryKey: ['admin-users'], queryFn: async()=> await getUsers(), placeholderData: keepPreviousData });
+  const [search, setSearch] = useState("");
   const users = useMemo(()=> usersRes?.data?.data || [], [usersRes]);
+  const filteredUsers = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) return users;
+    return users.filter((u) => {
+      return (
+        (u.name || "").toLowerCase().includes(term) ||
+        (u.email || "").toLowerCase().includes(term) ||
+        String(u.document || "").includes(term)
+      );
+    });
+  }, [users, search]);
   const { data: docsRes } = useQuery({ queryKey: ['doc-types'], queryFn: async()=> await getDocTypes(), placeholderData: keepPreviousData });
   const docTypes = docsRes?.data?.data || [];
   const { data: estadosRes } = useQuery({ queryKey: ['user-states'], queryFn: async()=> await getStates(1), placeholderData: keepPreviousData });
@@ -38,8 +50,17 @@ const AdminUsers = () => {
 	            Gestiona documentos, roles y estados desde cualquier dispositivo.
 	          </p>
 	        </div>
-	        <div className="table-scroll np-scroll">
-	          <table className="min-w-full text-left text-sm">
+        <div className="flex flex-wrap items-center gap-3 mb-3">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por nombre, correo o documento"
+            className="bg-[#111] border border-[#333] rounded px-3 py-2 text-white w-full sm:w-80"
+          />
+        </div>
+        <div className="table-scroll np-scroll">
+          <table className="min-w-full text-left text-sm">
           <thead className="bg-[#333] text-[#ababab]">
             <tr>
               <th className="p-3">Nombre</th>
@@ -53,9 +74,9 @@ const AdminUsers = () => {
             </tr>
           </thead>
 	          <tbody>
-	            {users.map(u => (
-	              <Row key={u._id} u={u} docTypes={docTypes} estados={estados} roles={roles} onSave={(payload)=> updateMutation.mutate({ id: u._id, payload })} onSetRole={(role)=> roleMutation.mutate({ id: u._id, role })} />
-	            ))}
+            {filteredUsers.map(u => (
+              <Row key={u._id} u={u} docTypes={docTypes} estados={estados} roles={roles} onSave={(payload)=> updateMutation.mutate({ id: u._id, payload })} onSetRole={(role)=> roleMutation.mutate({ id: u._id, role })} />
+            ))}
 	          </tbody>
 	        </table>
 	        </div>

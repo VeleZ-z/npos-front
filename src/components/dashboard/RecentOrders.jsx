@@ -218,45 +218,41 @@ const RecentOrders = () => {
       <div className="container mx-auto bg-[#262626] p-4 rounded-lg">
         <h2 className="text-[#f5f5f5] text-xl font-semibold mb-4">Ordenes de los clientes</h2>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setStatusFilter("all")}
-              className={`px-4 py-2 rounded ${
-                statusFilter === "all"
-                  ? "bg-[#2F974D] text-[#1a1a1a]"
-                  : "bg-[#1a1a1a] text-[#f5f5f5]"
-              }`}
-            >
-              Todas
-            </button>
-            <button
-              onClick={() => setStatusFilter("today")}
-              className={`px-4 py-2 rounded ${
-                statusFilter === "today"
-                  ? "bg-[#2F974D] text-[#1a1a1a]"
-                  : "bg-[#1a1a1a] text-[#f5f5f5]"
-              }`}
-            >
-              Hoy
-            </button>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { id: "all", label: "Todas" },
+              { id: "today", label: "Hoy" },
+            ].map((filter) => (
+              <button
+                key={filter.id}
+                onClick={() => setStatusFilter(filter.id)}
+                className={`rounded-full px-4 py-2 text-sm font-semibold ${
+                  statusFilter === filter.id
+                    ? "bg-[#2F974D] text-[#0f2f1c]"
+                    : "bg-[#2b2b2b] text-[#f5f5f5]"
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <label className="text-[#ababab] text-sm">
+            <label className="text-[#ababab] text-sm flex items-center gap-2">
               Desde:
               <input
                 type="date"
                 value={range.from}
                 onChange={(e) => setRange((prev) => ({ ...prev, from: e.target.value }))}
-                className="ml-2 bg-[#1a1a1a] border border-[#333] rounded px-2 py-1 text-[#f5f5f5]"
+                className="bg-[#1a1a1a] border border-[#333] rounded px-2 py-1 text-[#f5f5f5]"
               />
             </label>
-            <label className="text-[#ababab] text-sm">
+            <label className="text-[#ababab] text-sm flex items-center gap-2">
               Hasta:
               <input
                 type="date"
                 value={range.to}
                 onChange={(e) => setRange((prev) => ({ ...prev, to: e.target.value }))}
-                className="ml-2 bg-[#1a1a1a] border border-[#333] rounded px-2 py-1 text-[#f5f5f5]"
+                className="bg-[#1a1a1a] border border-[#333] rounded px-2 py-1 text-[#f5f5f5]"
               />
             </label>
           </div>

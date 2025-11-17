@@ -38,6 +38,7 @@ const Discounts = () => {
   const qc = useQueryClient();
   const [form, setForm] = useState(initialForm);
   const [flyer, setFlyer] = useState(null);
+  const [search, setSearch] = useState("");
 
   const { data: list, isLoading } = useQuery({
     queryKey: ["admin-discounts"],
@@ -46,6 +47,16 @@ const Discounts = () => {
       return res?.data?.data || [];
     },
   });
+  const filteredList = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) return list || [];
+    return (list || []).filter((d) => {
+      return (
+        (d.name || "").toLowerCase().includes(term) ||
+        (d.message || "").toLowerCase().includes(term)
+      );
+    });
+  }, [list, search]);
 
   const { data: productsData } = useQuery({
     queryKey: ["products-basic"],
@@ -270,16 +281,25 @@ const Discounts = () => {
 	      </div>
 
 	      <div className="page-card">
-	      <h2 className="text-lg font-semibold mb-4">Historial</h2>
+	      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-2">
+          <h2 className="text-lg font-semibold">Historial</h2>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por nombre o mensaje"
+            className="bg-[#1f1f1f] border border-[#333] rounded px-3 py-2 text-white w-full sm:w-72"
+          />
+        </div>
         {isLoading ? (
           <p className="text-sm text-[#ababab]">Cargando...</p>
-        ) : list.length === 0 ? (
+        ) : filteredList.length === 0 ? (
           <p className="text-sm text-[#ababab]">
             Aún no hay descuentos registrados.
           </p>
         ) : (
           <div className="space-y-4">
-            {list.map((discount) => (
+            {filteredList.map((discount) => (
               <div
                 key={discount._id}
                 className="border border-[#2a2a2a] rounded-lg p-4 flex flex-col md:flex-row md:items-center gap-4"

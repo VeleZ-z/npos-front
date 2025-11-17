@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getDiscounts } from "../https";
 
@@ -24,6 +24,7 @@ const Promotions = () => {
     () => (import.meta.env.VITE_BACKEND_URL || "").replace(/\/$/, ""),
     []
   );
+  const [search, setSearch] = useState("");
   const { data, isLoading } = useQuery({
     queryKey: ["public-promotions"],
     queryFn: async () => {
@@ -32,6 +33,19 @@ const Promotions = () => {
     },
   });
 
+  const filtered = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) return data || [];
+    return (data || []).filter((discount) => {
+      const inName = (discount.name || "").toLowerCase().includes(term);
+      const inMsg = (discount.message || "").toLowerCase().includes(term);
+      const inProducts = (discount.products || []).some((p) =>
+        (p.name || "").toLowerCase().includes(term)
+      );
+      return inName || inMsg || inProducts;
+    });
+  }, [data, search]);
+
   return (
     <section className="bg-[#111] min-h-[calc(100vh-5rem)] px-6 py-6 text-white overflow-y-auto">
       <div className="mb-6">
@@ -39,16 +53,25 @@ const Promotions = () => {
         <p className="text-sm text-[#ababab]">
           Consulta los descuentos disponibles para los productos.
         </p>
+        <div className="mt-3">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por nombre, mensaje o producto"
+            className="bg-[#1a1a1a] border border-[#333] rounded px-3 py-2 text-white w-full sm:w-96"
+          />
+        </div>
       </div>
       {isLoading ? (
         <p className="text-sm text-[#ababab]">Cargando promociones...</p>
-      ) : !data.length ? (
+      ) : !filtered.length ? (
         <p className="text-sm text-[#ababab]">
           No hay promociones activas en este momento.
         </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {data.map((discount) => (
+          {filtered.map((discount) => (
             <div
               key={discount._id}
               className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 flex flex-col gap-3"

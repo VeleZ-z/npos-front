@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { FaBell } from 'react-icons/fa';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
 import { getMyAlerts, ackMyAlert } from '../../https';
+import { useLoginModal } from '../../context/LoginModalContext';
 
 const AlertsBell = () => {
   const [open, setOpen] = useState(false);
   const qc = useQueryClient();
+  const { isAuth } = useSelector((state) => state.user);
+  const { openLoginModal } = useLoginModal?.() || {};
   const { data: resData } = useQuery({
     queryKey: ['my-alerts'],
     queryFn: async () => await getMyAlerts(),
@@ -19,7 +23,16 @@ const AlertsBell = () => {
   });
   return (
     <div className="relative">
-      <button onClick={() => setOpen((v)=>!v)} className="bg-[#1f1f1f] rounded-[15px] p-3 cursor-pointer relative">
+      <button
+        onClick={() => {
+          if (!isAuth) {
+            openLoginModal?.();
+            return;
+          }
+          setOpen((v)=>!v);
+        }}
+        className="bg-[#1f1f1f] rounded-[15px] p-3 cursor-pointer relative"
+      >
         <FaBell className="text-[#f5f5f5] text-2xl" />
         {alerts.length > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">{alerts.length}</span>
@@ -45,4 +58,3 @@ const AlertsBell = () => {
 }
 
 export default AlertsBell;
-
