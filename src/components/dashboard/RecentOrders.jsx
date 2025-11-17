@@ -81,14 +81,13 @@ const RecentOrders = () => {
     (order) => {
       if (!order) return null;
       const table = order.table;
-      const candidateValues = [];
-      if (typeof table === "number") {
-        candidateValues.push(table);
-      } else if (typeof table === "string") {
+      const candidates = [];
+      if (typeof table === "number") candidates.push(table);
+      else if (typeof table === "string") {
         const parsed = Number(table);
-        if (Number.isFinite(parsed)) candidateValues.push(parsed);
+        if (Number.isFinite(parsed)) candidates.push(parsed);
       } else if (table && typeof table === "object") {
-        candidateValues.push(
+        candidates.push(
           table.tableId,
           table.id,
           table._id,
@@ -96,8 +95,8 @@ const RecentOrders = () => {
           table.tableNo
         );
       }
-      for (const candidate of candidateValues) {
-        const num = Number(candidate);
+      for (const value of candidates) {
+        const num = Number(value);
         if (!Number.isFinite(num)) continue;
         const record = tables.find(
           (tbl) => Number(tbl._id) === num || Number(tbl.number) === num
@@ -114,6 +113,7 @@ const RecentOrders = () => {
       updateOrderStatus({ orderId, orderStatus, tableId }),
     onSuccess: () => {
       qc.invalidateQueries(["orders"]);
+      setTablePrompt(null);
     },
   });
 
@@ -123,14 +123,12 @@ const RecentOrders = () => {
       mutation.mutate(
         { orderId: order._id, orderStatus: status, tableId },
         {
-          onSuccess: () => setTablePrompt(null),
           onError: (err) => {
             const responseStatus = err?.response?.status;
             if (responseStatus === 409) {
-              enqueueSnackbar(
-                "La mesa seleccionada está ocupada. Elige otra mesa.",
-                { variant: "warning" }
-              );
+              enqueueSnackbar("Mesa ocupada, elige otra.", {
+                variant: "warning",
+              });
               setTablePrompt({ order, status, reason: "occupied" });
             } else if (responseStatus === 400 && requiresTable(status)) {
               enqueueSnackbar(
@@ -179,7 +177,7 @@ const RecentOrders = () => {
     ]
   );
 
-  const filteredOrders = useMemo(() => {
+  const orders = useMemo(() => {
     const base = Array.isArray(ordersRes?.data?.data) ? ordersRes.data.data : [];
     const withItems = base.filter((o) => (o?.items?.length || 0) > 0);
     let startRange = null;
@@ -279,7 +277,7 @@ const RecentOrders = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredOrders.map((order) => {
+          {orders.map((order) => {
             const status = normalizeStatus(order.orderStatus);
             const tableRecord = findTableRecordForOrder(order);
             const tableLabel =
@@ -336,7 +334,7 @@ const RecentOrders = () => {
             );
           })}
         </div>
-        {filteredOrders.length === 0 && (
+        {orders.length === 0 && (
           <p className="text-sm text-[#ababab] mt-4">No hay órdenes para este filtro.</p>
         )}
       </div>
