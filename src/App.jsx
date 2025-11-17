@@ -196,7 +196,7 @@ function Layout() {
         <Route
           path="/cash-desk/history"
           element={
-            <ProtectedRoutes roles={["Admin", "Cashier"]}>
+            <ProtectedRoutes roles={["Admin"]}>
               <CashDeskHistory />
             </ProtectedRoutes>
           }

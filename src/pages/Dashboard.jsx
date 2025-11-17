@@ -32,6 +32,7 @@ const Dashboard = () => {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   /* moved add-product into Inventory */
   const { role } = useSelector((state) => state.user);
+  const isAdmin = role === "Admin";
   const { data: todayStats, isLoading: statsLoading } = useTodayStats();
 
   const handleOpenModal = (action) => {
@@ -100,15 +101,17 @@ const Dashboard = () => {
                 isLoading={statsLoading}
               />
             </div>
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => navigate("/cash-desk/history")}
-                className="rounded-lg bg-[#1a1a1a] px-4 py-3 text-sm font-semibold text-[#f5f5f5] hover:bg-[#262626]"
-              >
-                Ver historial de cuadres y facturas
-              </button>
-            </div>
+            {isAdmin && (
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => navigate("/cash-desk/history")}
+                  className="rounded-lg bg-[#1a1a1a] px-4 py-3 text-sm font-semibold text-[#f5f5f5] hover:bg-[#262626]"
+                >
+                  Ver historial de cuadres y facturas
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
