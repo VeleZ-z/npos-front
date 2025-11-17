@@ -40,7 +40,7 @@ const Metrics = () => {
       color: "#5b45b0",
     },
     {
-      title: "Total Dishes",
+      title: "Total Productos",
       value: data?.counts?.products ?? 0,
       color: "#285430",
     },

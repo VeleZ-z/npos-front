@@ -130,5 +130,7 @@ export const openCashDesk = (payload) => axiosWrapper.post('/api/cash-desk/open'
 export const closeCashDesk = (payload) => axiosWrapper.post('/api/cash-desk/close', payload);
 export const getCashDeskMovements = (params) =>
   axiosWrapper.get('/api/cash-desk/movements', { params });
+export const getCashDeskHistory = (params) =>
+  axiosWrapper.get('/api/cash-desk/history', { params });
 export const exportCashDeskMovements = (params) =>
   axiosWrapper.get('/api/cash-desk/export', { params, responseType: 'blob' });

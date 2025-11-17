@@ -82,22 +82,33 @@ const Dashboard = () => {
         {activeTab === "Pidiendo" && <RecentOrders />}
         {activeTab === "Proveedores" && <Providers />}
         {activeTab === "Facturacion" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-            <MiniCard
-              title="Ganancias"
-              icon={<BsCashCoin />}
-              number={todayStats?.salesToday ?? 0}
-              change={todayStats?.salesChangePct ?? 0}
-              isCurrency
-              isLoading={statsLoading}
-            />
-            <MiniCard
-              title="Comandas Activas"
-              icon={<GrInProgress />}
-              number={todayStats?.activeToday ?? 0}
-              change={todayStats?.activeChangePct ?? 0}
-              isLoading={statsLoading}
-            />
+          <div className="space-y-4 mt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <MiniCard
+                title="Ganancias"
+                icon={<BsCashCoin />}
+                number={todayStats?.salesToday ?? 0}
+                change={todayStats?.salesChangePct ?? 0}
+                isCurrency
+                isLoading={statsLoading}
+              />
+              <MiniCard
+                title="Comandas Activas"
+                icon={<GrInProgress />}
+                number={todayStats?.activeToday ?? 0}
+                change={todayStats?.activeChangePct ?? 0}
+                isLoading={statsLoading}
+              />
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => navigate("/cash-desk/history")}
+                className="rounded-lg bg-[#1a1a1a] px-4 py-3 text-sm font-semibold text-[#f5f5f5] hover:bg-[#262626]"
+              >
+                Ver historial de cuadres y facturas
+              </button>
+            </div>
           </div>
         )}
       </div>

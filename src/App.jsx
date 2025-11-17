@@ -23,6 +23,7 @@ import {
   Sales,
   DishRank,
   CashDesk,
+  CashDeskHistory,
   Discounts,
   Promotions,
 } from "./pages";
@@ -189,6 +190,14 @@ function Layout() {
           element={
             <ProtectedRoutes roles={["Admin", "Cashier"]}>
               <CashDesk />
+            </ProtectedRoutes>
+          }
+        />
+        <Route
+          path="/cash-desk/history"
+          element={
+            <ProtectedRoutes roles={["Admin", "Cashier"]}>
+              <CashDeskHistory />
             </ProtectedRoutes>
           }
         />

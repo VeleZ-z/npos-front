@@ -223,7 +223,7 @@ const CashDesk = () => {
             placeholder="0"
           />
           <p className="text-sm text-[#ababab]">
-            Sólo administradores y cajeros pueden abrir la caja.
+            Base de la Caja.
           </p>
         </div>
 	    )}

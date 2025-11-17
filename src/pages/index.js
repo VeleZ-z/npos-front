@@ -16,5 +16,6 @@ export { default as Categories } from "./Categories";
 export { default as Sales } from "./Sales";
 export { default as DishRank } from "./DishRank";
 export { default as CashDesk } from "./CashDesk";
+export { default as CashDeskHistory } from "./CashDeskHistory";
 export { default as Discounts } from "./Discounts";
 export { default as Promotions } from "./Promotions";
