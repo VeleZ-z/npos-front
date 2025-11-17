@@ -41,15 +41,15 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="bg-[#1f1f1f] min-h-[calc(100vh-5rem)] overflow-y-auto pb-10 px-3 sm:px-4 md:px-6 box-border">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-8">
-        <div className="flex items-center gap-3">
+    <div className="page-shell">
+      <div className="page-shell__content flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-4 sm:py-6">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           {(role === "Admin" ? buttons : []).map(({ label, icon, action }) => {
             return (
               <button
                 key={action}
                 onClick={() => handleOpenModal(action)}
-                className="bg-[#1a1a1a] hover:bg-[#262626] px-8 py-3 rounded-lg text-[#f5f5f5] font-semibold text-md flex items-center gap-2"
+                className="bg-[#1a1a1a] hover:bg-[#262626] px-5 sm:px-7 py-3 rounded-lg text-[#f5f5f5] font-semibold text-sm sm:text-md flex items-center gap-2"
               >
                 {label} {icon}
               </button>
@@ -57,7 +57,7 @@ const Dashboard = () => {
           })}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           {tabs.map((tab) => {
             return (
               <button
@@ -77,7 +77,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-1 sm:px-0">
+      <div className="page-shell__content px-1 sm:px-0">
         {activeTab === "Metrics" && <Metrics />}
         {activeTab === "Pidiendo" && <RecentOrders />}
         {activeTab === "Proveedores" && <Providers />}
@@ -103,7 +103,9 @@ const Dashboard = () => {
       </div>
 
       {isTableModalOpen && <Modal setIsTableModalOpen={setIsTableModalOpen} />}
-      {isCategoryModalOpen && <CategoryModal onClose={() => setIsCategoryModalOpen(false)} />}
+      {isCategoryModalOpen && (
+        <CategoryModal onClose={() => setIsCategoryModalOpen(false)} />
+      )}
       {/* add product modal moved into Inventory */}
     </div>
   );
