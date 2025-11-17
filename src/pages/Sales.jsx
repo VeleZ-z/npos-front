@@ -1353,7 +1353,7 @@ const Sales = () => {
                           }}
                           className="bg-[#1f1f1f] hover:bg-[#262626] border border-[#333] rounded p-3 text-left flex flex-col gap-2"
                         >
-                          <div className="w-full h-32 rounded-md bg-[#111] overflow-hidden flex items-center justify-center">
+                          <div className="w-full h-32 rounded-md bg-[#111] overflow-hidden box-border flex items-center justify-center">
                             <img
                               src={p.imageSrc || "https://via.placeholder.com/300x200?text=Sin+imagen"}
                               alt={p.name}
@@ -1404,7 +1404,7 @@ const Sales = () => {
                           }}
                           className="bg-[#1f1f1f] hover:bg-[#262626] border border-[#333] rounded p-3 text-left flex flex-col gap-2"
                         >
-                          <div className="w-full h-32 rounded-md bg-[#111] overflow-hidden flex items-center justify-center">
+                          <div className="w-full h-32 rounded-md bg-[#111] overflow-hidden box-border flex items-center justify-center">
                             <img
                               src={p.imageSrc || "https://via.placeholder.com/300x200?text=Sin+imagen"}
                               alt={p.name}

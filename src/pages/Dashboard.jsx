@@ -41,7 +41,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="bg-[#1f1f1f] min-h-[calc(100vh-5rem)] overflow-y-auto pb-10 px-3 sm:px-4 md:px-6">
+    <div className="bg-[#1f1f1f] min-h-[calc(100vh-5rem)] overflow-y-auto pb-10 px-3 sm:px-4 md:px-6 box-border">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-8">
         <div className="flex items-center gap-3">
           {(role === "Admin" ? buttons : []).map(({ label, icon, action }) => {

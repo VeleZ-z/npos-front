@@ -24,11 +24,11 @@ body {
 
 @layer components {
   .page-shell {
-    @apply bg-[#1f1f1f] min-h-[calc(100vh-5rem)] w-full overflow-y-auto px-3 sm:px-4 md:px-6 lg:px-10 pt-4 pb-24;
+    @apply bg-[#1f1f1f] min-h-[calc(100vh-5rem)] w-full overflow-y-auto px-3 sm:px-4 md:px-6 lg:px-10 pt-4 pb-24 box-border;
   }
 
   .page-shell__content {
-    @apply w-full max-w-6xl mx-auto space-y-6 px-1 sm:px-0;
+    @apply w-full max-w-6xl mx-auto space-y-6 px-1 sm:px-3 md:px-0;
   }
 
   .page-card {

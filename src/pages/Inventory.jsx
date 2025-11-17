@@ -101,8 +101,8 @@ const Inventory = () => {
   const [showAdd, setShowAdd] = useState(false);
 
   return (
-    <section className="page-shell text-[#f5f5f5]">
-      <div className="page-shell__content px-1 sm:px-0">
+    <section className="page-shell text-[#f5f5f5] box-border">
+      <div className="page-shell__content px-1 sm:px-3 md:px-0">
 	      <div className="page-card space-y-5">
 	        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 	          <h1 className="text-2xl font-bold">Inventario de Productos</h1>
