@@ -1032,18 +1032,20 @@ const Sales = () => {
             Total $ {(order?.bills?.total || 0).toLocaleString()}
             {order?.orderStatus &&
               (isStaff ? (
-                <select
-                  value={String(order.orderStatus || "").toUpperCase()}
-                  onChange={(e) => handleStatusChange(e.target.value)}
-                  className="ml-3 bg-[#1f1f1f] border border-[#333] rounded px-2 py-1 text-xs text-[#f5f5f5]"
-                  disabled={String(order.orderStatus || "").toUpperCase() === "CERRADO"}
-                >
-                  {orderStates.map((st) => (
-                    <option key={st} value={st}>
-                      {st}
-                    </option>
-                  ))}
-                </select>
+        <select
+          value={String(order.orderStatus || "").toUpperCase()}
+          onChange={(e) => handleStatusChange(e.target.value)}
+          className="ml-3 bg-[#1f1f1f] border border-[#333] rounded px-2 py-1 text-xs text-[#f5f5f5]"
+          disabled={String(order.orderStatus || "").toUpperCase() === "CERRADO"}
+        >
+          {orderStates
+            .filter((st) => st !== "PAGADO")
+            .map((st) => (
+              <option key={st} value={st}>
+                {st}
+              </option>
+            ))}
+        </select>
               ) : (
                 <span className="ml-3 text-sm text-[#ababab]">
                   ({String(order.orderStatus).toUpperCase()})
