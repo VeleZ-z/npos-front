@@ -145,7 +145,7 @@ const Bill = () => {
           href="/orders"
           onClick={handlePlaceOrder}
           disabled={orderMutation.isPending}
-          className="bg-[#6EF221] px-4 py-3 w-full rounded-lg text-[#1f1f1f] font-semibold text-lg disabled:bg-gray-400"
+          className="bg-[#4BC81B] px-4 py-3 w-full rounded-lg text-[#1f1f1f] font-semibold text-lg disabled:bg-gray-400"
         >
           {orderMutation.isPending ? "Creando..." : "Crear Orden"}
         </button>

@@ -61,7 +61,7 @@ const CategoryModal = ({ onClose }) => {
             </div>
           </div>
 
-          <button type="submit" className="w-full rounded-lg mt-6 py-3 text-lg bg-yellow-400 text-gray-900 font-bold">
+          <button type="submit" className="w-full rounded-lg mt-6 py-3 text-lg bg-[#4BC81B] hover:bg-[#3aa114] text-gray-900 font-bold">
             Create
           </button>
         </form>

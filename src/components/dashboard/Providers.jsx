@@ -43,7 +43,12 @@ const Providers = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-[#f5f5f5] text-xl font-semibold">Proveedores</h2>
         {isAdmin && (
-          <button onClick={() => setShowModal(true)} className="bg-[#F6B100] hover:bg-yellow-500 text-[#1a1a1a] font-semibold px-6 py-2 rounded-lg">Agregar</button>
+          <button
+            onClick={() => setShowModal(true)}
+            className="bg-[#4BC81B] hover:bg-[#3aa114] text-[#1a1a1a] font-semibold px-6 py-2 rounded-lg"
+          >
+            Agregar
+          </button>
         )}
       </div>
 
@@ -91,4 +96,3 @@ const Providers = () => {
 };
 
 export default Providers;
-

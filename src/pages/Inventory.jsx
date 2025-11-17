@@ -194,7 +194,7 @@ const Inventory = () => {
 	    {canManageAll && (
 	      <button
 	        onClick={() => setShowAdd(true)}
-	        className="fixed bottom-8 right-6 sm:right-8 bg-[#F6B100] hover:bg-yellow-500 text-[#1a1a1a] font-semibold px-5 py-3 rounded-full shadow-lg"
+	        className="fixed bottom-8 right-6 sm:right-8 bg-[#4BC81B] hover:bg-[#3aa114] text-[#1a1a1a] font-semibold px-5 py-3 rounded-full shadow-lg"
 	      >
 	        Añadir Producto
 	      </button>

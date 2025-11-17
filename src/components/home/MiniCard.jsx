@@ -14,6 +14,8 @@ const MiniCard = ({
   change,
   isCurrency = false,
   isLoading = false,
+  accentColor = "#4BC81B",
+  accentTextColor = "#1a1a1a",
 }) => {
   const changeValue = Number(change || 0);
   const changeLabel = `${changeValue >= 0 ? "+" : ""}${changeValue.toFixed(
@@ -25,7 +27,10 @@ const MiniCard = ({
         <h1 className="text-[#f5f5f5] text-lg font-semibold tracking-wide">
           {title}
         </h1>
-        <div className="bg-[#6EF221] p-3 rounded-lg text-[#1a1a1a] text-2xl">
+        <div
+          className="p-3 rounded-lg text-2xl"
+          style={{ backgroundColor: accentColor, color: accentTextColor }}
+        >
           {icon}
         </div>
       </div>
@@ -59,6 +64,8 @@ MiniCard.propTypes = {
   change: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   isCurrency: PropTypes.bool,
   isLoading: PropTypes.bool,
+  accentColor: PropTypes.string,
+  accentTextColor: PropTypes.string,
 };
 
 MiniCard.defaultProps = {
@@ -66,6 +73,8 @@ MiniCard.defaultProps = {
   change: 0,
   isCurrency: false,
   isLoading: false,
+  accentColor: "#4BC81B",
+  accentTextColor: "#1a1a1a",
 };
 
 export default MiniCard;

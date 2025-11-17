@@ -213,7 +213,7 @@ const Row = ({ pm, estados, isAdmin, onSave, onSetEstado, onDelete }) => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => onSave({ name, estado_id: estado })}
-              className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded"
+              className="bg-[#4BC81B] hover:bg-[#3aa114] text-[#1a1a1a] px-3 py-1 rounded"
             >
               Actualizar
             </button>

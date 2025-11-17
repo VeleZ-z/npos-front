@@ -23,12 +23,14 @@ const Home = () => {
         value: todayStats?.salesToday ?? 0,
         change: todayStats?.salesChangePct ?? 0,
         isCurrency: true,
+        accentColor: "#4BC81B",
       },
       {
         title: "Comandas Activas",
         icon: <GrInProgress />,
         value: todayStats?.activeToday ?? 0,
         change: todayStats?.activeChangePct ?? 0,
+        accentColor: "#f6b100",
       },
     ],
     [todayStats]
@@ -59,6 +61,7 @@ const Home = () => {
 	                      change={card.change}
 	                      isCurrency={card.isCurrency}
 	                      isLoading={statsLoading}
+	                      accentColor={card.accentColor}
 	                    />
 	                  ))}
 	                </div>

@@ -6,7 +6,7 @@ export const getBgColor = () => {
     "#735f32",
     "#1d2569",
     "#285430",
-    "#6EF221",
+    "#4BC81B",
     "#025cca",
     "#be3e3f",
     "#02ca3a",

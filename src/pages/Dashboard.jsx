@@ -92,6 +92,7 @@ const Dashboard = () => {
                 change={todayStats?.salesChangePct ?? 0}
                 isCurrency
                 isLoading={statsLoading}
+                accentColor="#4BC81B"
               />
               <MiniCard
                 title="Comandas Activas"
@@ -99,6 +100,7 @@ const Dashboard = () => {
                 number={todayStats?.activeToday ?? 0}
                 change={todayStats?.activeChangePct ?? 0}
                 isLoading={statsLoading}
+                accentColor="#f6b100"
               />
             </div>
             {isAdmin && (

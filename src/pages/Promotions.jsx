@@ -56,7 +56,7 @@ const Promotions = () => {
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">{discount.name}</h2>
                 {discount.percent != null && (
-                  <span className="px-3 py-1 rounded-full bg-[#6EF221] text-black text-sm font-semibold">
+                  <span className="px-3 py-1 rounded-full bg-[#4BC81B] text-black text-sm font-semibold">
                     {discount.percent}% OFF
                   </span>
                 )}

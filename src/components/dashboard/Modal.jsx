@@ -97,12 +97,12 @@ const Modal = ({ setIsTableModalOpen }) => {
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full rounded-lg mt-10 mb-6 py-3 text-lg bg-yellow-400 text-gray-900 font-bold"
-          >
-            Añadir Mesa
-          </button>
+      <button
+        type="submit"
+        className="w-full rounded-lg mt-10 mb-6 py-3 text-lg bg-[#4BC81B] hover:bg-[#3aa114] text-gray-900 font-bold"
+      >
+        Añadir Mesa
+      </button>
         </form>
       </motion.div>
     </div>

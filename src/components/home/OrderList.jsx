@@ -15,7 +15,7 @@ const OrderList = ({ order }) => {
 
   return (
     <div className="flex items-center gap-5 mb-3">
-      <button className="bg-[#6EF221] p-3 text-xl font-bold rounded-lg">
+      <button className="bg-[#4BC81B] p-3 text-xl font-bold rounded-lg">
         {getAvatarName(customerName)}
       </button>
       <div className="flex items-center justify-between w-[100%]">
@@ -26,7 +26,7 @@ const OrderList = ({ order }) => {
           <p className="text-[#ababab] text-sm">{itemsCount} Items</p>
         </div>
 
-        <h1 className="text-[#6EF221] font-semibold border border-[#6EF221] rounded-lg p-1">
+        <h1 className="text-[#4BC81B] font-semibold border border-[#4BC81B] rounded-lg p-1">
           Mesa <FaLongArrowAltRight className="text-[#ababab] ml-2 inline" />{" "}
           {tableNumber}
         </h1>
