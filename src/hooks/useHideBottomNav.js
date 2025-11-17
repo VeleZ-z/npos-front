@@ -5,10 +5,12 @@ import { useLocation } from "react-router-dom";
 const useHideBottomNav = (shouldHide) => {
   const location = useLocation();
   const { role } = useSelector((state) => state.user);
-  const isCustomer = String(role || "").toLowerCase() === "customer";
+  const roleLower = String(role || "").toLowerCase();
+  const isStaff = roleLower === "admin" || roleLower === "cashier";
 
   useEffect(() => {
-    if (!isCustomer) return;
+    // Esconder solo para clientes/invitados; staff mantiene la barra
+    if (isStaff) return;
     const nav = document.getElementById("bottom-nav");
     if (!nav) return;
     if (shouldHide(location.pathname)) {
@@ -19,7 +21,7 @@ const useHideBottomNav = (shouldHide) => {
     return () => {
       nav.style.display = "";
     };
-  }, [location.pathname, shouldHide, isCustomer]);
+  }, [location.pathname, shouldHide, isStaff]);
 };
 
 export default useHideBottomNav;
