@@ -99,7 +99,7 @@ function Layout() {
         <Route
           path="/tables"
           element={
-            <ProtectedRoutes>
+            <ProtectedRoutes allowGuest>
               <Tables />
             </ProtectedRoutes>
           }
@@ -107,7 +107,7 @@ function Layout() {
         <Route
           path="/menu"
           element={
-            <ProtectedRoutes>
+            <ProtectedRoutes allowGuest>
               <Menu />
             </ProtectedRoutes>
           }
@@ -225,8 +225,10 @@ function Layout() {
 
 function ProtectedRoutes({ children, roles, allowGuest }) {
   const { isAuth, role } = useSelector((state) => state.user);
+  const { openLoginModal } = useLoginModal();
   if (!isAuth) {
     if (allowGuest) return children;
+    try { openLoginModal(); } catch {}
     return <Navigate to="/" replace />;
   }
   if (Array.isArray(roles) && roles.length > 0) {

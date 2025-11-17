@@ -8,6 +8,7 @@ import Modal from "./Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { setCustomer } from "../../redux/slices/customerSlice";
 import { BsCashCoin } from "react-icons/bs";
+import { useLoginModal } from "../../context/LoginModalContext";
 
 const BottomNav = () => {
   const navigate = useNavigate();
@@ -20,8 +21,9 @@ const BottomNav = () => {
   const [phone, setPhone] = useState("");
   const [moreOpen, setMoreOpen] = useState(false);
 
-  const { role } = useSelector((state) => state.user);
+  const { role, isAuth } = useSelector((state) => state.user);
   const isStaff = role === "Admin" || role === "Cashier";
+  const { openLoginModal } = useLoginModal?.() || {};
 
   const openModal = () => {
     // Prefill for customers with their profile data if present
@@ -94,9 +96,13 @@ const BottomNav = () => {
                 <p>Inventario</p>
               </button>
               <button
-                onClick={() =>
-                  navigate(role === "Admin" ? "/descuentos" : "/promociones")
-                }
+                onClick={() => {
+                  if (!isAuth) {
+                    openLoginModal?.();
+                    return;
+                  }
+                  navigate(role === "Admin" ? "/descuentos" : "/promociones");
+                }}
                 className={`flex items-center justify-center font-bold ${
                   isActive("/descuentos") || isActive("/promociones")
                     ? "text-[#f5f5f5] bg-[#343434]"
@@ -176,7 +182,13 @@ const BottomNav = () => {
               <FaHome className="inline mr-2" size={20} /> <p>Home</p>
             </button>
             <button
-              onClick={() => navigate("/orders")}
+              onClick={() => {
+                if (!isAuth) {
+                  openLoginModal?.();
+                  return;
+                }
+                navigate("/orders");
+              }}
               className={`flex items-center justify-center font-bold ${
                 isActive("/ordenes")
                   ? "text-[#f5f5f5] bg-[#343434]"
@@ -187,7 +199,13 @@ const BottomNav = () => {
               <p>Ordenes</p>
             </button>
             <button
-              onClick={() => navigate("/promociones")}
+              onClick={() => {
+                if (!isAuth) {
+                  openLoginModal?.();
+                  return;
+                }
+                navigate("/promociones");
+              }}
               className={`flex items-center justify-center font-bold ${
                 isActive("/promociones")
                   ? "text-[#f5f5f5] bg-[#343434]"

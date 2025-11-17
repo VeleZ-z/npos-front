@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
+import { useLoginModal } from "../../context/LoginModalContext";
 import { getPopularProductsStats } from "../../https";
 
 const PopularDishes = () => {
   const navigate = useNavigate();
+  const { openLoginModal } = useLoginModal();
   const { role } = useSelector((state) => state.user || {});
   const isAdmin = String(role || "").toLowerCase() === "admin";
   const { data: resData, isLoading } = useQuery({
@@ -29,13 +31,19 @@ const PopularDishes = () => {
 	        <h1 className="text-[#f5f5f5] text-lg font-semibold tracking-wide">
 	          Productos mas populares
 	        </h1>
-	        <button
-	          type="button"
-	          onClick={() => navigate("/dishrank")}
-	          className="text-[#025cca] text-sm font-semibold hover:underline"
-	        >
-	          Ver todos
-	        </button>
+        <button
+          type="button"
+          onClick={() => {
+            if (!role) {
+              openLoginModal();
+              return;
+            }
+            navigate("/dishrank");
+          }}
+          className="text-[#025cca] text-sm font-semibold hover:underline"
+        >
+          Ver todos
+        </button>
 	      </div>
 
 	      <div className="overflow-y-auto max-h-[32rem] scrollbar-hide pb-2">
