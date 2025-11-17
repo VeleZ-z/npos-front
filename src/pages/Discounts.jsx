@@ -257,7 +257,7 @@ const Discounts = () => {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="px-4 py-2 rounded bg-[#f6b100] text-black disabled:opacity-50"
+            className="px-4 py-2 rounded bg-[#6EF221] text-black disabled:opacity-50"
           >
             {mutation.isPending
               ? "Guardando..."

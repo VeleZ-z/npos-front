@@ -25,7 +25,7 @@ const MiniCard = ({
         <h1 className="text-[#f5f5f5] text-lg font-semibold tracking-wide">
           {title}
         </h1>
-        <div className="bg-[#f6b100] p-3 rounded-lg text-[#1a1a1a] text-2xl">
+        <div className="bg-[#6EF221] p-3 rounded-lg text-[#1a1a1a] text-2xl">
           {icon}
         </div>
       </div>

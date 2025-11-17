@@ -107,13 +107,13 @@ const DiscountsTable = () => {
                         loading="lazy"
                       />
                       {slide.badge && (
-                        <span className="absolute top-3 right-3 bg-[#f6b100] text-[#1a1a1a] text-sm font-semibold px-3 py-1 rounded-full shadow-lg">
+                        <span className="absolute top-3 right-3 bg-[#6EF221] text-[#1a1a1a] text-sm font-semibold px-3 py-1 rounded-full shadow-lg">
                           {slide.badge}
                         </span>
                       )}
                     </div>
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-[#f6b100]">Descuento</p>
+                      <p className="text-xs uppercase tracking-[0.3em] text-[#6EF221]">Descuento</p>
                       <h3 className="text-2xl font-semibold text-white">{slide.name}</h3>
                       {slide.message && (
                         <p className="text-sm text-[#ababab] mt-1">{slide.message}</p>
@@ -171,7 +171,7 @@ const DiscountsTable = () => {
                   type="button"
                   onClick={() => goTo(idx)}
                   className={`h-2.5 rounded-full transition-all ${
-                    idx === index ? "w-6 bg-[#f6b100]" : "w-2 bg-[#555]"
+                    idx === index ? "w-6 bg-[#6EF221]" : "w-2 bg-[#555]"
                   }`}
                 />
               ))}

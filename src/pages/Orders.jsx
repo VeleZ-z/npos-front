@@ -114,7 +114,7 @@ const Orders = () => {
               onClick={() => setStatus(filter.id)}
               className={`rounded-full px-4 py-2 text-sm font-semibold ${
                 status === filter.id
-                  ? "bg-[#f6b100] text-[#1f1f1f]"
+                  ? "bg-[#6EF221] text-[#1f1f1f]"
                   : "bg-[#2b2b2b] text-[#f5f5f5]"
               }`}
             >
@@ -130,7 +130,7 @@ const Orders = () => {
               onClick={() => setRange(filter.id)}
               className={`rounded-full px-4 py-2 text-sm font-semibold ${
                 range === filter.id
-                  ? "bg-[#f6b100] text-[#1f1f1f]"
+                  ? "bg-[#6EF221] text-[#1f1f1f]"
                   : "bg-[#2b2b2b] text-[#f5f5f5]"
               }`}
             >
