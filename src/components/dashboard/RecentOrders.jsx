@@ -15,12 +15,19 @@ import {
 import { formatDateAndTime } from "../../utils";
 
 const STATUS_REQUIRING_TABLE = new Set(["PENDIENTE", "LISTO", "READY"]);
+const DATE_FILTERS = [
+  { id: "all", label: "Todo el tiempo" },
+  { id: "30", label: "Últimos 30 días" },
+  { id: "7", label: "Últimos 7 días" },
+  { id: "custom", label: "Personalizado" },
+];
 
 const RecentOrders = () => {
   const queryClient = useQueryClient();
   const [tablePrompt, setTablePrompt] = useState(null);
-  const [statusFilter, setStatusFilter] = useState("all"); // all | today
-  const [range, setRange] = useState({ from: "", to: "" });
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [rangeFilter, setRangeFilter] = useState("all");
+  const [customRange, setCustomRange] = useState({ from: "", to: "" });
 
   const orderStatusUpdateMutation = useMutation({
     mutationFn: ({ orderId, orderStatus, tableId }) =>
@@ -32,35 +39,6 @@ const RecentOrders = () => {
     queryFn: async () => await getOrders(),
     placeholderData: keepPreviousData,
   });
-  const orders = useMemo(() => {
-    const base = Array.isArray(resData?.data?.data) ? resData.data.data : [];
-    const filteredByItems = base.filter((order) => (order?.items?.length || 0) > 0);
-    const today = new Date();
-    const startRange = range.from ? new Date(range.from) : null;
-    const endRange = range.to ? new Date(range.to) : null;
-
-    return filteredByItems.filter((order) => {
-      const orderDate = order?.orderDate ? new Date(order.orderDate) : null;
-      if (!orderDate || Number.isNaN(orderDate.getTime())) return false;
-
-      if (statusFilter === "today") {
-        const sameDay =
-          orderDate.getFullYear() === today.getFullYear() &&
-          orderDate.getMonth() === today.getMonth() &&
-          orderDate.getDate() === today.getDate();
-        if (!sameDay) return false;
-      }
-
-      if (startRange && orderDate < startRange) return false;
-      if (endRange) {
-        const endOfDay = new Date(endRange);
-        endOfDay.setHours(23, 59, 59, 999);
-        if (orderDate > endOfDay) return false;
-      }
-
-      return true;
-    });
-  }, [resData, statusFilter, range]);
 
   const { data: statesRes } = useQuery({
     queryKey: ["order-states"],
@@ -72,6 +50,7 @@ const RecentOrders = () => {
       statesRes?.data?.data?.map((s) => (s.name || "").toUpperCase()) ?? [
         "PENDIENTE",
         "LISTO",
+        "PAGADO",
       ],
     [statesRes]
   );
@@ -204,7 +183,7 @@ const RecentOrders = () => {
       requiresTable,
       findTableRecordForOrder,
       commitStatusChange,
-      enqueueSnackbar
+      enqueueSnackbar,
     ]
   );
 
@@ -213,21 +192,69 @@ const RecentOrders = () => {
     [tablePrompt, findTableRecordForOrder]
   );
 
+  const filteredOrders = useMemo(() => {
+    const base = Array.isArray(resData?.data?.data) ? resData.data.data : [];
+    const withItems = base.filter((order) => (order?.items?.length || 0) > 0);
+    let startRange = null;
+    let endRange = null;
+    if (rangeFilter === "custom") {
+      startRange = customRange.from ? new Date(customRange.from) : null;
+      endRange = customRange.to ? new Date(customRange.to) : null;
+    } else if (rangeFilter !== "all") {
+      const days = Number(rangeFilter);
+      if (Number.isFinite(days) && days > 0) {
+        const since = new Date();
+        since.setDate(since.getDate() - days);
+        startRange = since;
+      }
+    }
+
+    return withItems.filter((order) => {
+      const orderDate = order?.orderDate ? new Date(order.orderDate) : null;
+      if (!orderDate || Number.isNaN(orderDate.getTime())) return false;
+      const status = normalizeStatus(order.orderStatus);
+      if (statusFilter !== "all" && status !== statusFilter) return false;
+      if (startRange && orderDate < startRange) return false;
+      if (endRange) {
+        const endOfDay = new Date(endRange);
+        endOfDay.setHours(23, 59, 59, 999);
+        if (orderDate > endOfDay) return false;
+      }
+      return true;
+    });
+  }, [resData, rangeFilter, customRange, statusFilter, normalizeStatus]);
+
   return (
     <>
-      <div className="container mx-auto bg-[#262626] p-4 rounded-lg">
-        <h2 className="text-[#f5f5f5] text-xl font-semibold mb-4">Ordenes de los clientes</h2>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+      <div className="page-card bg-[#262626]">
+        <h2 className="text-[#f5f5f5] text-xl font-semibold mb-4">
+          Ordenes de los clientes
+        </h2>
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4">
           <div className="flex flex-wrap gap-2">
-            {[
-              { id: "all", label: "Todas" },
-              { id: "today", label: "Hoy" },
-            ].map((filter) => (
+            {[{ id: "all", label: "Todas" }, ...orderStates.map((st) => ({ id: st, label: st }))].map(
+              (filter) => (
+                <button
+                  key={filter.id}
+                  onClick={() => setStatusFilter(filter.id)}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold ${
+                    statusFilter === filter.id
+                      ? "bg-[#2F974D] text-[#0f2f1c]"
+                      : "bg-[#2b2b2b] text-[#f5f5f5]"
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              )
+            )}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {DATE_FILTERS.map((filter) => (
               <button
                 key={filter.id}
-                onClick={() => setStatusFilter(filter.id)}
+                onClick={() => setRangeFilter(filter.id)}
                 className={`rounded-full px-4 py-2 text-sm font-semibold ${
-                  statusFilter === filter.id
+                  rangeFilter === filter.id
                     ? "bg-[#2F974D] text-[#0f2f1c]"
                     : "bg-[#2b2b2b] text-[#f5f5f5]"
                 }`}
@@ -235,100 +262,95 @@ const RecentOrders = () => {
                 {filter.label}
               </button>
             ))}
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <label className="text-[#ababab] text-sm flex items-center gap-2">
-              Desde:
-              <input
-                type="date"
-                value={range.from}
-                onChange={(e) => setRange((prev) => ({ ...prev, from: e.target.value }))}
-                className="bg-[#1a1a1a] border border-[#333] rounded px-2 py-1 text-[#f5f5f5]"
-              />
-            </label>
-            <label className="text-[#ababab] text-sm flex items-center gap-2">
-              Hasta:
-              <input
-                type="date"
-                value={range.to}
-                onChange={(e) => setRange((prev) => ({ ...prev, to: e.target.value }))}
-                className="bg-[#1a1a1a] border border-[#333] rounded px-2 py-1 text-[#f5f5f5]"
-              />
-            </label>
+            {rangeFilter === "custom" && (
+              <div className="flex flex-wrap items-center gap-3 text-sm text-[#f5f5f5]">
+                <label className="flex items-center gap-2">
+                  Desde:
+                  <input
+                    type="date"
+                    value={customRange.from}
+                    onChange={(e) =>
+                      setCustomRange((prev) => ({ ...prev, from: e.target.value }))
+                    }
+                    className="bg-[#1a1a1a] border border-[#333] rounded px-2 py-1"
+                  />
+                </label>
+                <label className="flex items-center gap-2">
+                  Hasta:
+                  <input
+                    type="date"
+                    value={customRange.to}
+                    onChange={(e) =>
+                      setCustomRange((prev) => ({ ...prev, to: e.target.value }))
+                    }
+                    className="bg-[#1a1a1a] border border-[#333] rounded px-2 py-1"
+                  />
+                </label>
+              </div>
+            )}
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-[#f5f5f5]">
-            <thead className="bg-[#333] text-[#ababab]">
-              <tr>
-                <th className="p-3">Order ID</th>
-                <th className="p-3">Customer</th>
-                <th className="p-3">Status</th>
-                <th className="p-3">Date & Time</th>
-                <th className="p-3">Items</th>
-                <th className="p-3">Table No</th>
-                <th className="p-3">Total</th>
-                <th className="p-3 text-center">Payment</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order, index) => {
-                const customerName = order?.customer?.name || "Sin nombre";
-                const status = (
-                  order?.orderStatus || "PENDIENTE"
-                ).toUpperCase();
-                const itemsCount = order?.items?.length || 0;
-                const tableNo =
-                  order?.table?.tableNo || order?.table?.number || "N/A";
-                const total =
-                  order?.bills?.totalWithTax ?? order?.bills?.total ?? 0;
-                const payment =
-                  order?.paymentMethod || order?.paymentStatus || "N/A";
-                const orderId = order?._id || order?.id || index;
-                const orderDate = order?.orderDate;
 
-                return (
-                  <tr
-                    key={orderId}
-                    className="border-b border-gray-600 hover:bg-[#333]"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filteredOrders.map((order) => {
+            const status = normalizeStatus(order.orderStatus);
+            const tableRecord = findTableRecordForOrder(order);
+            const tableLabel =
+              tableRecord?.name ||
+              tableRecord?.tableNo ||
+              tableRecord?._id ||
+              order.table ||
+              "-";
+            const totalStr = Number(order.bills?.total || 0).toLocaleString();
+            const orderDate = order?.orderDate ? new Date(order.orderDate) : null;
+
+            return (
+              <div
+                key={order._id}
+                className="bg-[#1f1f1f] border border-[#2a2a2a] rounded-xl p-4 flex flex-col gap-3"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm text-[#ababab]">
+                      #{order.orderNumber || order._id}
+                    </p>
+                    <h3 className="text-lg font-semibold">
+                      {order.customer?.name || "Cliente"}
+                    </h3>
+                    <p className="text-xs text-[#8a8a8a]">
+                      Mesa {tableLabel} · {order.items?.length || 0} ítems
+                    </p>
+                  </div>
+                  <select
+                    value={status}
+                    onChange={(e) => handleStatusChange(order, e.target.value)}
+                    className="bg-[#2b2b2b] border border-[#444] rounded px-2 py-1 text-sm text-[#f5f5f5]"
                   >
-                    <td className="p-4">#{orderId}</td>
-                    <td className="p-4">{customerName}</td>
-                    <td className="p-4">
-                      <select
-                        className={`bg-[#1a1a1a] text-[#f5f5f5] border border-gray-500 p-2 rounded-lg focus:outline-none ${
-                          status === "READY" || status === "LISTO"
-                            ? "text-green-500"
-                            : "text-yellow-500"
-                        }`}
-                        value={status}
-                        onChange={(e) =>
-                          handleStatusChange(order, e.target.value)
-                        }
-                        disabled={status === "CERRADO" || status === "CLOSED"}
-                      >
-                        {orderStates.map((st) => (
-                          <option
-                            key={st}
-                            value={st}
-                            className="text-[#f5f5f5]"
-                          >
-                            {st}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="p-4">{formatDateAndTime(orderDate)}</td>
-                    <td className="p-4">{itemsCount} Items</td>
-                    <td className="p-4">Table - {tableNo}</td>
-                    <td className="p-4">$ {total}</td>
-                    <td className="p-4 text-center">{payment}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    {orderStates.map((st) => (
+                      <option key={st} value={st}>
+                        {st}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="text-sm text-[#f5f5f5]">
+                  {orderDate ? formatDateAndTime(orderDate) : "-"}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-[#ababab]">Estado de pago:</span>
+                  <span className="text-sm">{order.paymentStatus || "—"}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-[#ababab]">Total</span>
+                  <span className="text-lg font-semibold">${totalStr}</span>
+                </div>
+              </div>
+            );
+          })}
         </div>
+        {filteredOrders.length === 0 && (
+          <p className="text-sm text-[#ababab] mt-4">No hay órdenes para este filtro.</p>
+        )}
       </div>
       {tablePrompt && (
         <div className="fixed inset-0 bg-black/60 z-40 flex items-center justify-center px-4">
