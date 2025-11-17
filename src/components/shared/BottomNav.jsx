@@ -122,7 +122,7 @@ const BottomNav = () => {
               <button
                 disabled={isActive("/tables") || isActive("/menu")}
                 onClick={handleFabClick}
-                className="absolute bottom-6 bg-[#4BC81B] hover:bg-[#3aa114] text-[#f5f5f5] rounded-full p-4 items-center"
+                className="absolute bottom-6 bg-[#2F974D] hover:bg-[#277f41] text-[#f5f5f5] rounded-full p-4 items-center"
               >
                 <BiSolidDish size={40} />
               </button>
@@ -225,7 +225,7 @@ const BottomNav = () => {
             <button
               disabled={isActive("/tables") || isActive("/menu")}
               onClick={openModal}
-              className="absolute bottom-6 bg-[#4BC81B] hover:bg-[#3aa114] text-[#f5f5f5] rounded-full p-4 items-center"
+              className="absolute bottom-6 bg-[#2F974D] hover:bg-[#277f41] text-[#f5f5f5] rounded-full p-4 items-center"
             >
               <BiSolidDish size={40} />
             </button>
@@ -289,7 +289,7 @@ const BottomNav = () => {
               </div>
               <button
                 onClick={handleCreateOrder}
-                className="w-full bg-[#4BC81B] text-[#f5f5f5] rounded-lg py-3 mt-8 hover:bg-[#3aa114]"
+                className="w-full bg-[#2F974D] text-[#f5f5f5] rounded-lg py-3 mt-8 hover:bg-[#277f41]"
               >
                 Crear Orden
               </button>

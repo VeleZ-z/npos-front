@@ -45,7 +45,7 @@ const Providers = () => {
         {isAdmin && (
           <button
             onClick={() => setShowModal(true)}
-            className="bg-[#4BC81B] hover:bg-[#3aa114] text-[#1a1a1a] font-semibold px-6 py-2 rounded-lg"
+            className="bg-[#2F974D] hover:bg-[#277f41] text-[#1a1a1a] font-semibold px-6 py-2 rounded-lg"
           >
             Agregar
           </button>

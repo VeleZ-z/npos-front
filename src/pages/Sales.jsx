@@ -1526,7 +1526,7 @@ const Sales = () => {
                   className={`px-4 py-2 rounded ${
                     assignCustomerMutation.isPending
                       ? "bg-[#3a3a3a] text-[#777]"
-                      : "bg-[#4BC81B] text-[#1a1a1a] hover:bg-[#3aa114]"
+                      : "bg-[#2F974D] text-[#1a1a1a] hover:bg-[#277f41]"
                   }`}
                 >
                   Guardar nombre
@@ -1760,7 +1760,7 @@ const Sales = () => {
                 className={`px-4 py-2 rounded ${
                   invoiceMutation.isPending || !selectedPayMethod
                     ? "bg-[#3a3a3a] text-[#777]"
-                    : "bg-[#4BC81B] text-[#1a1a1a] hover:bg-[#3aa114]"
+                    : "bg-[#2F974D] text-[#1a1a1a] hover:bg-[#277f41]"
                 }`}
               >
                 {invoiceMutation.isPending ? "Facturando..." : "Facturar"}

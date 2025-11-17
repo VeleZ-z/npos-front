@@ -17,7 +17,7 @@ const OrderCard = ({ order }) => {
   return (
     <div className="w-full bg-[#262626] p-4 rounded-lg mb-4">
       <div className="flex items-center gap-5">
-        <button className="bg-[#4BC81B] p-3 text-xl font-bold rounded-lg">
+        <button className="bg-[#2F974D] p-3 text-xl font-bold rounded-lg">
           {getAvatarName(customerName)}
         </button>
         <div className="flex items-center justify-between w-[100%]">

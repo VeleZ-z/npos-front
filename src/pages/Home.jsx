@@ -23,7 +23,7 @@ const Home = () => {
         value: todayStats?.salesToday ?? 0,
         change: todayStats?.salesChangePct ?? 0,
         isCurrency: true,
-        accentColor: "#4BC81B",
+        accentColor: "#2F974D",
       },
       {
         title: "Comandas Activas",

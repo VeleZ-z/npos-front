@@ -69,7 +69,7 @@ const ProviderFormModal = ({ initial, onSubmit, onClose }) => {
             <input name="contact" value={form.contact} onChange={handleChange} className="w-full bg-[#1f1f1f] text-white rounded-lg p-3" required />
           </div>
 
-          <button type="submit" className="w-full rounded-lg mt-2 py-3 text-lg bg-[#4BC81B] hover:bg-[#3aa114] text-gray-900 font-bold">
+          <button type="submit" className="w-full rounded-lg mt-2 py-3 text-lg bg-[#2F974D] hover:bg-[#277f41] text-gray-900 font-bold">
             {initial ? 'Actualizar' : 'Crear'}
           </button>
         </form>

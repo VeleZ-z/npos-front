@@ -223,7 +223,7 @@ const RecentOrders = () => {
               onClick={() => setStatusFilter("all")}
               className={`px-4 py-2 rounded ${
                 statusFilter === "all"
-                  ? "bg-[#4BC81B] text-[#1a1a1a]"
+                  ? "bg-[#2F974D] text-[#1a1a1a]"
                   : "bg-[#1a1a1a] text-[#f5f5f5]"
               }`}
             >
@@ -233,7 +233,7 @@ const RecentOrders = () => {
               onClick={() => setStatusFilter("today")}
               className={`px-4 py-2 rounded ${
                 statusFilter === "today"
-                  ? "bg-[#4BC81B] text-[#1a1a1a]"
+                  ? "bg-[#2F974D] text-[#1a1a1a]"
                   : "bg-[#1a1a1a] text-[#f5f5f5]"
               }`}
             >

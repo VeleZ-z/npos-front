@@ -56,7 +56,7 @@ const Categories = () => {
 
       <button
         onClick={()=> setShowAdd(true)}
-        className="fixed bottom-8 right-8 bg-[#4BC81B] hover:bg-[#3aa114] text-[#1a1a1a] font-semibold px-5 py-3 rounded-full shadow-lg"
+        className="fixed bottom-8 right-8 bg-[#2F974D] hover:bg-[#277f41] text-[#1a1a1a] font-semibold px-5 py-3 rounded-full shadow-lg"
       >
         Crear Categoría
       </button>

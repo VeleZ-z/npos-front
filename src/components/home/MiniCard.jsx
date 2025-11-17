@@ -14,7 +14,7 @@ const MiniCard = ({
   change,
   isCurrency = false,
   isLoading = false,
-  accentColor = "#4BC81B",
+  accentColor = "#2F974D",
   accentTextColor = "#1a1a1a",
 }) => {
   const changeValue = Number(change || 0);
@@ -73,7 +73,7 @@ MiniCard.defaultProps = {
   change: 0,
   isCurrency: false,
   isLoading: false,
-  accentColor: "#4BC81B",
+  accentColor: "#2F974D",
   accentTextColor: "#1a1a1a",
 };
 

@@ -182,7 +182,7 @@ const CashDeskHistory = () => {
                 onClick={() => setRange(filter.id)}
                 className={`rounded-full px-4 py-1 text-sm ${
                   range === filter.id
-                    ? "bg-[#4BC81B] text-black"
+                    ? "bg-[#2F974D] text-black"
                     : "bg-[#1f1f1f] text-[#ababab]"
                 }`}
               >
@@ -194,7 +194,7 @@ const CashDeskHistory = () => {
               onClick={() => setRange("custom")}
               className={`rounded-full px-4 py-1 text-sm ${
                 range === "custom"
-                  ? "bg-[#4BC81B] text-black"
+                  ? "bg-[#2F974D] text-black"
                   : "bg-[#1f1f1f] text-[#ababab]"
               }`}
             >
@@ -268,7 +268,7 @@ const CashDeskHistory = () => {
                           : ""}
                       </p>
                     </div>
-                    <span className="rounded-full bg-[#1f1f1f] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#4BC81B]">
+                    <span className="rounded-full bg-[#1f1f1f] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#2F974D]">
                       {cuadre.estado || "—"}
                     </span>
                   </div>

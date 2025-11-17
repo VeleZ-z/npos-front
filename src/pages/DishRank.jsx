@@ -99,7 +99,7 @@ const DishRank = () => {
                 onClick={() => setRange(filter.id)}
                 className={`rounded-full px-4 py-1 text-sm ${
                   range === filter.id
-                    ? "bg-[#4BC81B] text-black"
+                    ? "bg-[#2F974D] text-black"
                     : "bg-[#1f1f1f] text-[#ababab]"
                 }`}
               >
@@ -111,7 +111,7 @@ const DishRank = () => {
               onClick={() => setRange("custom")}
               className={`rounded-full px-4 py-1 text-sm ${
                 range === "custom"
-                  ? "bg-[#4BC81B] text-black"
+                  ? "bg-[#2F974D] text-black"
                   : "bg-[#1f1f1f] text-[#ababab]"
               }`}
             >
@@ -184,7 +184,7 @@ const DishRank = () => {
                       className="grid grid-cols-1 md:grid-cols-12 items-center gap-4 py-4"
                     >
                       <div className="flex items-center gap-4 md:col-span-6">
-                        <span className="text-lg font-semibold text-[#4BC81B] w-8">
+                        <span className="text-lg font-semibold text-[#2F974D] w-8">
                           {product.rank.toString().padStart(2, "0")}
                         </span>
                         {imageSrc ? (
@@ -222,7 +222,7 @@ const DishRank = () => {
                     key={product.productId}
                     className="flex items-center gap-4 py-4"
                   >
-                        <span className="text-lg font-semibold text-[#4BC81B] w-10">
+                        <span className="text-lg font-semibold text-[#2F974D] w-10">
                       {product.rank.toString().padStart(2, "0")}
                     </span>
                     {imageSrc ? (

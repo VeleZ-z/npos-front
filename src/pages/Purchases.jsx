@@ -75,7 +75,7 @@ const Purchases = () => {
           {isAdmin && (
             <button
               onClick={() => setShowForm(true)}
-              className="bg-[#4BC81B] hover:bg-[#3aa114] text-black font-semibold px-4 py-2 rounded-lg"
+              className="bg-[#2F974D] hover:bg-[#277f41] text-black font-semibold px-4 py-2 rounded-lg"
             >
               Nueva Compra
             </button>
@@ -343,7 +343,7 @@ const PurchaseForm = ({ providers, onClose, purchase }) => {
       </div>
       <button
         type="submit"
-        className="w-full bg-[#4BC81B] hover:bg-[#3aa114] text-black font-semibold rounded py-2"
+        className="w-full bg-[#2F974D] hover:bg-[#277f41] text-black font-semibold rounded py-2"
       >
         Guardar
       </button>
