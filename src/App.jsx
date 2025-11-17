@@ -30,7 +30,7 @@ import Header from "./components/shared/Header";
 import { useSelector } from "react-redux";
 import useLoadData from "./hooks/useLoadData";
 import FullScreenLoader from "./components/shared/FullScreenLoader";
-import { LoginModalProvider } from "./context/LoginModalContext";
+import { LoginModalProvider, useLoginModal } from "./context/LoginModalContext";
 import LoginModal from "./components/auth/LoginModal";
 
 function Layout() {
