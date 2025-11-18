@@ -27,7 +27,16 @@ const AdminUsers = () => {
   const { data: estadosRes } = useQuery({ queryKey: ['user-states'], queryFn: async()=> await getStates(1), placeholderData: keepPreviousData });
   const estados = estadosRes?.data?.data || [];
   const { data: rolesRes } = useQuery({ queryKey: ['roles'], queryFn: async()=> await getRoles(), placeholderData: keepPreviousData });
-  const roles = rolesRes?.data?.data || [{ _id: 0, name: 'Customer' }];
+  const rolesRaw = rolesRes?.data?.data || [{ _id: 0, name: 'Customer' }];
+  const roles = useMemo(() => {
+    const seen = new Set();
+    return rolesRaw.filter((r) => {
+      const key = (r.name || '').toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [rolesRaw]);
 
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }) => apiUpdateUser(id, payload),
