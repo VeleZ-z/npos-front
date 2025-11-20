@@ -9,27 +9,42 @@ const formatCurrency = (value) =>
     maximumFractionDigits: 0,
   });
 
-const formatPercentText = (value) => {
+const formatPercentText = (value, suffix = "que ayer") => {
   const num = Number(value || 0);
   const formatted = `${num > 0 ? "+" : ""}${num.toFixed(1)}%`;
-  return `${formatted} que ayer`;
+  return `${formatted} ${suffix}`;
 };
 
 const Metrics = () => {
   const { data, isLoading } = useTodayStats();
 
-  const metricsCards = [
+  const dailyCards = [
     {
       title: "Ganancias",
       value: data ? `$ ${formatCurrency(data.salesToday)}` : "$ 0",
       change: data ? data.salesChangePct : 0,
-      color: "#1a1a1a",
+      label: "que ayer",
     },
     {
       title: "Comandas Activas",
       value: data ? data.activeToday : 0,
       change: data ? data.activeChangePct : 0,
-      color: "#1a1a1a",
+      label: "que ayer",
+    },
+  ];
+
+  const monthlyCards = [
+    {
+      title: "Ganancias (mes)",
+      value: data ? `$ ${formatCurrency(data.salesMonth)}` : "$ 0",
+      change: data ? data.salesMonthChangePct : 0,
+      label: "que el mes pasado",
+    },
+    {
+      title: "Comandas Activas (mes)",
+      value: data ? data.activeMonth : 0,
+      change: data ? data.activeMonthChangePct : 0,
+      label: "que el mes pasado",
     },
   ];
 
@@ -77,7 +92,7 @@ const Metrics = () => {
       </div>
 
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metricsCards.map((metric, index) => (
+        {[...dailyCards, ...monthlyCards].map((metric) => (
           <div
             key={metric.title}
             className="shadow-sm rounded-lg p-4 bg-[#1a1a1a]"
@@ -99,7 +114,9 @@ const Metrics = () => {
                   : "text-red-400"
               }`}
             >
-              {isLoading ? "Calculando..." : formatPercentText(metric.change)}
+              {isLoading
+                ? "Calculando..."
+                : formatPercentText(metric.change, metric.label)}
             </p>
           </div>
         ))}

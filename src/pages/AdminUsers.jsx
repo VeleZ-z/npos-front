@@ -31,7 +31,7 @@ const AdminUsers = () => {
   const roles = useMemo(() => {
     const seen = new Set();
     return rolesRaw.filter((r) => {
-      const key = (r.name || '').toLowerCase();
+      const key = (r.name || '').trim().toLowerCase();
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
