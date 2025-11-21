@@ -45,7 +45,7 @@ const Dashboard = () => {
     <div className="page-shell">
       <div className="page-shell__content flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-4 sm:py-6">
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-          {(role === "Admin" ? buttons : []).map(({ label, icon, action }) => {
+          {(role === "Admin" || role === "Cashier" ? buttons : []).map(({ label, icon, action }) => {
             return (
               <button
                 key={action}

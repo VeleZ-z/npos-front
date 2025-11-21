@@ -113,6 +113,7 @@ const Purchases = () => {
               <th className="p-3">Proveedor</th>
               <th className="p-3">Stock</th>
               <th className="p-3">Entrega</th>
+              <th className="p-3">Estado entrega</th>
               <th className="p-3">Vencimiento</th>
               <th className="p-3">Costo por Unidad</th>
               <th className="p-3">Acciones</th>
@@ -190,6 +191,7 @@ const Row = ({ p, isAdmin, isStaff, onUpdateStock, onDelete, onEdit }) => {
         )}
       </td>
       <td className="p-3">{p.deliveryDate || "-"}</td>
+      <td className="p-3">{p.estadoCompra || p.estado_compra || p.estado || "-"}</td>
       <td className="p-3">{p.expirationDate || "-"}</td>
       <td className="p-3">{p.cost}</td>
       <td className="p-3">
