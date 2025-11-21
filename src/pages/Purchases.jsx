@@ -191,7 +191,7 @@ const Row = ({ p, isAdmin, isStaff, onUpdateStock, onDelete, onEdit }) => {
         )}
       </td>
       <td className="p-3">{p.deliveryDate || "-"}</td>
-      <td className="p-3">{p.estadoCompra || p.estado_compra || p.estado || "-"}</td>
+      <td className="p-3">{p.estadoCompraName || p.estadoCompra || p.estado_compra_nombre || p.estado_compra || p.estado || "-"}</td>
       <td className="p-3">{p.expirationDate || "-"}</td>
       <td className="p-3">{p.cost}</td>
       <td className="p-3">
