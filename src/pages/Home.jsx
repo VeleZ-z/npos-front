@@ -26,10 +26,10 @@ const Home = () => {
         accentColor: "#2F974D",
       },
       {
-        title: "Comandas Activas",
+        title: "Pedidos Facturados",
         icon: <GrInProgress />,
-        value: todayStats?.activeToday ?? 0,
-        change: todayStats?.activeChangePct ?? 0,
+        value: todayStats?.invoicedToday ?? 0,
+        change: todayStats?.invoicedChangePct ?? 0,
         accentColor: "#f6b100",
       },
     ],

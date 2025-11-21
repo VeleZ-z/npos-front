@@ -102,10 +102,10 @@ const Dashboard = () => {
                 accentColor="#2F974D"
               />
               <MiniCard
-                title="Comandas Activas"
+                title="Pedidos Facturados"
                 icon={<GrInProgress />}
-                number={todayStats?.activeToday ?? 0}
-                change={todayStats?.activeChangePct ?? 0}
+                number={todayStats?.invoicedToday ?? 0}
+                change={todayStats?.invoicedChangePct ?? 0}
                 isLoading={statsLoading}
                 accentColor="#f6b100"
               />

@@ -26,9 +26,9 @@ const Metrics = () => {
       label: "que ayer",
     },
     {
-      title: "Comandas Activas",
-      value: data ? data.activeToday : 0,
-      change: data ? data.activeChangePct : 0,
+      title: "Pedidos Facturados",
+      value: data ? data.invoicedToday : 0,
+      change: data ? data.invoicedChangePct : 0,
       label: "que ayer",
     },
   ];
@@ -41,9 +41,9 @@ const Metrics = () => {
       label: "que el mes pasado",
     },
     {
-      title: "Comandas Activas (mes)",
-      value: data ? data.activeMonth : 0,
-      change: data ? data.activeMonthChangePct : 0,
+      title: "Pedidos Facturados (mes)",
+      value: data ? data.invoicedMonth : 0,
+      change: data ? data.invoicedMonthChangePct : 0,
       label: "que el mes pasado",
     },
   ];
@@ -60,8 +60,8 @@ const Metrics = () => {
       color: "#285430",
     },
     {
-      title: "Comandas Activas",
-      value: data?.activeToday ?? 0,
+      title: "Pedidos Facturados",
+      value: data?.invoicedToday ?? 0,
       color: "#735f32",
     },
     {
