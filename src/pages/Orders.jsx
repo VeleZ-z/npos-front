@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from "react-redux";
 import BottomNav from "../components/shared/BottomNav";
 import OrderCard from "../components/orders/OrderCard";
@@ -31,7 +31,7 @@ const Orders = () => {
       document.title = "NPOS | Orders"
     }, [])
 
-  const { role, isAuth } = useSelector((state) => state.user);
+  const { isAuth } = useSelector((state) => state.user);
   const { data: resData, isError } = useQuery({
     queryKey: ["orders"],
     queryFn: async () => {

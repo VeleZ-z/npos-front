@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 import {
   exportCashDeskMovements,
   getCashDeskHistory,
@@ -84,6 +85,10 @@ const MovementsList = ({ cuadreId }) => {
       </div>
     </div>
   );
+};
+
+MovementsList.propTypes = {
+  cuadreId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 const CashDeskHistory = () => {

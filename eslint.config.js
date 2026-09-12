@@ -43,6 +43,15 @@ export default [
     },
   },
   {
+    // Contextos de React: el patrón proveedor + hook en un mismo archivo es
+    // legítimo y estándar. react-refresh lo marca como falso positivo porque el
+    // archivo exporta además el contexto. No es deuda de código.
+    files: ['src/context/**/*.{js,jsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
     // Configs de herramienta con contexto Node (vite/playwright/tailwind/postcss).
     files: ['*.config.js', 'postcss.config.js', 'tailwind.config.js'],
     languageOptions: {

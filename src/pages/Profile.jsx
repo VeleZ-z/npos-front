@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { getUserData, getDocTypes, updateProfile } from '../https';
 import { enqueueSnackbar } from 'notistack';
@@ -21,7 +20,7 @@ const Profile = () => {
       tipo_doc_id: me.docTypeId || '',
       cumpleanos: (me.birthday || '').slice(0,10)
     });
-  }, [me._id]);
+  }, [me.document, me.phone, me.docTypeId, me.birthday]);
 
   const mutation = useMutation({
     mutationFn: (payload) => updateProfile(payload),

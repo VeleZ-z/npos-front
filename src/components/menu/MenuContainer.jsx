@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from 'react';
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { getCategories, getProducts, getDiscounts } from "../../https";
 import { GrRadialSelected } from "react-icons/gr";
@@ -16,21 +16,21 @@ const MenuContainer = () => {
     queryFn: async () => await getCategories(),
     placeholderData: keepPreviousData,
   });
-  const categories = catsRes?.data?.data || [];
+  const categories = useMemo(() => catsRes?.data?.data || [], [catsRes?.data?.data]);
 
   const { data: prodsRes } = useQuery({
     queryKey: ["products"],
     queryFn: async () => await getProducts(),
     placeholderData: keepPreviousData,
   });
-  const products = prodsRes?.data?.data || [];
+  const products = useMemo(() => prodsRes?.data?.data || [], [prodsRes?.data?.data]);
 
   const { data: discountsRes } = useQuery({
     queryKey: ["discounts-active"],
     queryFn: async () => await getDiscounts(),
     placeholderData: keepPreviousData,
   });
-  const discounts = discountsRes?.data?.data || [];
+  const discounts = useMemo(() => discountsRes?.data?.data || [], [discountsRes?.data?.data]);
 
   const [selected, setSelected] = useState(null);
   const [itemCount, setItemCount] = useState(0);

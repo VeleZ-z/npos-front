@@ -1,4 +1,3 @@
-import React from "react";
 import Greetings from "../home/Greetings";
 import RecentOrders from "../home/RecentOrders";
 import useTodayStats from "../../hooks/useTodayStats";

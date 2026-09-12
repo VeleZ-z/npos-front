@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { getProviders, addProvider, updateProvider, deleteProvider } from "../../https";
 import { enqueueSnackbar } from "notistack";
@@ -19,11 +19,12 @@ const Providers = () => {
     queryFn: async () => await getProviders(),
     placeholderData: keepPreviousData,
   });
-  const providers = resData?.data?.data || [];
+  const providers = resData?.data?.data;
   const filteredProviders = useMemo(() => {
+    const list = providers || [];
     const term = search.trim().toLowerCase();
-    if (!term) return providers;
-    return providers.filter((p) => {
+    if (!term) return list;
+    return list.filter((p) => {
       return (
         (p.name || "").toLowerCase().includes(term) ||
         (p.contact || "").toLowerCase().includes(term) ||

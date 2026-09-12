@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { getUsers, updateUser as apiUpdateUser, setUserRole as apiSetUserRole, getDocTypes, getStates, getRoles } from '../https';
@@ -27,8 +27,8 @@ const AdminUsers = () => {
   const { data: estadosRes } = useQuery({ queryKey: ['user-states'], queryFn: async()=> await getStates(1), placeholderData: keepPreviousData });
   const estados = estadosRes?.data?.data || [];
   const { data: rolesRes } = useQuery({ queryKey: ['roles'], queryFn: async()=> await getRoles(), placeholderData: keepPreviousData });
-  const rolesRaw = rolesRes?.data?.data || [{ _id: 0, name: 'Customer' }];
   const roles = useMemo(() => {
+    const rolesRaw = rolesRes?.data?.data || [{ _id: 0, name: 'Customer' }];
     const seen = new Set();
     return rolesRaw.filter((r) => {
       const key = (r.name || '').trim().toLowerCase();
@@ -36,7 +36,7 @@ const AdminUsers = () => {
       seen.add(key);
       return true;
     });
-  }, [rolesRaw]);
+  }, [rolesRes?.data?.data]);
 
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }) => apiUpdateUser(id, payload),

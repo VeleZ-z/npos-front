@@ -28,10 +28,10 @@ const LoginModal = ({ open, onClose }) => {
             <div className="relative h-full w-full bg-black/60 p-6 md:p-10 flex flex-col justify-center gap-4 text-white">
               <h2 className="text-2xl font-bold">Nativho&apos;s</h2>
               <p className="text-sm leading-relaxed text-gray-100">
-                "En Nativhos creemos que compartir un helado es compartir un pedacito de alegría.
+                &quot;En Nativhos creemos que compartir un helado es compartir un pedacito de alegría.
                 Por eso, ofrecemos a cada cliente los mejores sabores de mi tierra, con un servicio amable
                 y lleno de calidez, para que cada visita se sienta como volver a casa. Porque cuando el corazón
-                se llena de sabor... siempre quieres regresar."
+                se llena de sabor... siempre quieres regresar.&quot;
               </p>
               <p className="text-sm text-yellow-400 font-semibold">- Nativho&apos;s</p>
             </div>

@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getOrders, getOrderById, createInvoice } from "../https";
 import { enqueueSnackbar } from "notistack";
-import { useSelector } from "react-redux";
 
 const Cashier = () => {
   const queryClient = useQueryClient();
-  const { user } = useSelector((state) => state.user);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [customerData, setCustomerData] = useState({
@@ -48,7 +46,7 @@ const Cashier = () => {
           phone: order.customer.phone || "",
         }));
       }
-    } catch (error) {
+    } catch {
       enqueueSnackbar("Error al cargar orden", { variant: "error" });
     }
   };

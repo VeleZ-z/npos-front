@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   keepPreviousData,
   useMutation,
@@ -162,7 +162,7 @@ const RecentOrders = () => {
         }
       );
     },
-    [enqueueSnackbar, mutation, requiresTable, admin, staff]
+    [enqueueSnackbar, mutation, requiresTable, normalizeStatus, admin, staff]
   );
 
   const handleStatusChange = useCallback(

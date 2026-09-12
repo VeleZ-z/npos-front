@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect, useRef } from 'react';
 import PropTypes from "prop-types";
 import {
   useQuery,
@@ -183,7 +183,7 @@ const Inventory = () => {
                   onSave={(payload) => upd.mutate({ id: p._id, payload })}
                   onUploadImage={(file) => upImg.mutate({ id: p._id, file })}
                   admin={admin}
-                  onDelete={() => delMutation.mutate(p._id)}
+                  onDelete={(id) => delMutation.mutate(id)}
                 />
               ))}
             </tbody>
@@ -214,6 +214,7 @@ const Row = ({
   taxes,
   onSave,
   onUploadImage,
+  onDelete,
   admin,
 }) => {
   const [form, setForm] = useState({
@@ -394,7 +395,7 @@ const Row = ({
                 const typed = window.prompt(msg, "");
                 if (typed == null) return;
                 if (String(typed).trim() === String(p.name || "").trim()) {
-                  onDelete();
+                  onDelete(p._id);
                 } else {
                   enqueueSnackbar(
                     "El nombre no coincide. No se eliminó el producto.",
@@ -488,6 +489,7 @@ Row.propTypes = {
   ).isRequired,
   onSave: PropTypes.func.isRequired,
   onUploadImage: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
   admin: PropTypes.bool.isRequired,
 };
 

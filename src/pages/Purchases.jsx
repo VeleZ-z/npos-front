@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from 'react';
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import {
@@ -400,6 +400,11 @@ Row.propTypes = {
     deliveryDate: PropTypes.string,
     expirationDate: PropTypes.string,
     cost: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    estadoCompraName: PropTypes.string,
+    estadoCompra: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    estado_compra_nombre: PropTypes.string,
+    estado_compra: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    estado: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }).isRequired,
   admin: PropTypes.bool,
   staff: PropTypes.bool,

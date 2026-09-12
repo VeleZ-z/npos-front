@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   useQuery,
   useMutation,
@@ -129,7 +129,7 @@ const Sales = () => {
     placeholderData: keepPreviousData,
     enabled: staff,
   });
-  const discounts = discountsRes?.data?.data || [];
+  const discounts = useMemo(() => discountsRes?.data?.data || [], [discountsRes?.data?.data]);
   const fullProducts = useMemo(() => {
     if (!products.length) return [];
     if (!staff) return [...products];
@@ -272,10 +272,6 @@ const Sales = () => {
   const canInvoice =
     staff && order?._id && (order?.items?.length || 0) > 0 && !order?.invoice;
   const customerDisplayName = order?.customer?.name || "Clientes Varios";
-  const customerDocument =
-    order?.customer?.document ||
-    order?.customer?.nit ||
-    "222222222222";
   const baseInvoiceTotal = Number(order?.bills?.total || 0);
   const invoiceTipValue = Number(invoiceForm.tip || 0) || 0;
   const finalInvoiceTotal = baseInvoiceTotal + invoiceTipValue;

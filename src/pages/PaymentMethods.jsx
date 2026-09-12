@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from 'react';
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import {

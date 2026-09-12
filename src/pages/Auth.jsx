@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from 'react';
 import restaurant from "../assets/images/restaurant-img.jpg";
 import logo from "../assets/images/logo.png";
 // GIS One Tap only

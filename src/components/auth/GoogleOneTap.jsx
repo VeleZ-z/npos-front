@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from "react-redux";
 import { enqueueSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,6 @@ const GoogleOneTap = () => {
   const navigate = useNavigate();
   const btnRef = useRef(null);
   const [error, setError] = useState("");
-  const [ready, setReady] = useState(false);
   // state only for displaying errors
 
   useEffect(() => {
@@ -69,7 +68,7 @@ const GoogleOneTap = () => {
             }
           } catch { /* empty */ }
         }, 9 * 60 * 1000);
-      } catch (e) {
+      } catch {
         setError("No se pudo obtener 'state' del servidor");
       }
     };
@@ -103,7 +102,6 @@ const GoogleOneTap = () => {
       try {
         api.prompt();
       } catch { /* empty */ }
-      setReady(true);
       return true;
     };
 

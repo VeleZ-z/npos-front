@@ -1,9 +1,8 @@
-import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { formatDate, getAvatarName } from "../../utils";
 
 const CustomerInfo = () => {
-  const [dateTime, setDateTime] = useState(new Date());
+  const dateTime = new Date();
   const customerData = useSelector((state) => state.customer);
 
   return (

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from 'react';
 import OrderList from "./OrderList";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { enqueueSnackbar } from "notistack";

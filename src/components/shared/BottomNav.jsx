@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+﻿import { useState } from "react";
 import { FaHome } from "react-icons/fa";
 import { MdOutlineReorder } from "react-icons/md";
 import { CiCircleMore } from "react-icons/ci";
@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCustomer } from "../../redux/slices/customerSlice";
 import { BsCashCoin } from "react-icons/bs";
 import { useLoginModal } from "../../context/LoginModalContext";
-import { isStaff, isAdmin } from "../../utils/roles";
+import { isStaff, isAdmin, isCustomer } from "../../utils/roles";
 
 const BottomNav = () => {
   const navigate = useNavigate();
@@ -73,7 +73,7 @@ const BottomNav = () => {
       className="fixed bottom-0 left-0 right-0 bg-[#262626] p-2 h-16 flex justify-around"
     >
       {(() => {
-        if (isStaff) {
+        if (staff) {
           return (
             <>
               <button

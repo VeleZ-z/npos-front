@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState } from "react";
+import { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { getTotalPrice } from "../../redux/slices/cartSlice";
 import { addOrder, updateTable } from "../../https/index";
