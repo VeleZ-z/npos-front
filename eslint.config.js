@@ -5,12 +5,12 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'coverage', 'playwright-report', 'test-results'] },
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: { ...globals.browser, ...globals.node },
       parserOptions: {
         ecmaVersion: 'latest',
         ecmaFeatures: { jsx: true },
@@ -33,6 +33,20 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+    },
+  },
+  {
+    // Archivos de test: permitir globals de Vitest sin ensuciar el resto.
+    files: ['**/*.test.{js,jsx}', 'src/test/**/*.{js,jsx}'],
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.vitest },
+    },
+  },
+  {
+    // Configs de herramienta con contexto Node (vite/playwright/tailwind/postcss).
+    files: ['*.config.js', 'postcss.config.js', 'tailwind.config.js'],
+    languageOptions: {
+      globals: { ...globals.node },
     },
   },
 ]
