@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCustomer } from "../../redux/slices/customerSlice";
 import { BsCashCoin } from "react-icons/bs";
 import { useLoginModal } from "../../context/LoginModalContext";
+import { isStaff, isAdmin } from "../../utils/roles";
 
 const BottomNav = () => {
   const navigate = useNavigate();
@@ -22,13 +23,14 @@ const BottomNav = () => {
   const [moreOpen, setMoreOpen] = useState(false);
 
   const { role, isAuth } = useSelector((state) => state.user);
-  const isStaff = role === "Admin" || role === "Cashier";
+  const staff = isStaff(role);
+  const admin = isAdmin(role);
   const { openLoginModal } = useLoginModal?.() || {};
 
   const openModal = () => {
     // Prefill for customers with their profile data if present
     try {
-      if ((user?.role || "").toLowerCase() === "customer") {
+      if (isCustomer(role)) {
         setName(user?.name || "");
         // if user.phone is null/undefined, keep empty so placeholder is shown
         setPhone(user?.phone ? String(user.phone) : "");
@@ -41,7 +43,7 @@ const BottomNav = () => {
   const closeModal = () => setIsModalOpen(false);
 
   const handleFabClick = () => {
-    if (isStaff) {
+    if (staff) {
       navigate("/sales");
       return;
     }
@@ -101,7 +103,7 @@ const BottomNav = () => {
                     openLoginModal?.();
                     return;
                   }
-                  navigate(role === "Admin" ? "/descuentos" : "/promociones");
+                  navigate(admin ? "/descuentos" : "/promociones");
                 }}
                 className={`flex items-center justify-center font-bold ${
                   isActive("/descuentos") || isActive("/promociones")
@@ -143,7 +145,7 @@ const BottomNav = () => {
                   >
                     Mi Perfil
                   </button>
-                  {role === "Admin" && (
+                  {admin && (
                     <button
                       onClick={() => {
                         navigate("/admin/users");
@@ -154,7 +156,7 @@ const BottomNav = () => {
                       Administrar Usuarios
                     </button>
                   )}
-                  {(role === "Admin" || role === "Cashier") && (
+                  {staff && (
                     <button
                       onClick={() => {
                         navigate("/paymethods");

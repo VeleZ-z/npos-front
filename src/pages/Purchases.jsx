@@ -18,11 +18,12 @@ import {
 } from "../https";
 import { enqueueSnackbar } from "notistack";
 import { Link } from "react-router-dom";
+import { isAdmin, isStaff } from "../utils/roles";
 
 const Purchases = () => {
   const { role } = useSelector((s) => s.user);
-  const isAdmin = String(role || "").toLowerCase() === "admin";
-  const isStaff = isAdmin || String(role || "").toLowerCase() === "cashier";
+  const admin = isAdmin(role);
+  const staff = isStaff(role);
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editPurchase, setEditPurchase] = useState(null);
@@ -82,7 +83,7 @@ const Purchases = () => {
       <div className="flex items-center justify-between px-10 py-4">
         <h1 className="text-[#f5f5f5] text-2xl font-bold">Compras</h1>
         <div className="flex items-center gap-3">
-          {isAdmin && (
+          {admin && (
             <button
               onClick={() => setShowForm(true)}
               className="bg-[#2F974D] hover:bg-[#277f41] text-black font-semibold px-4 py-2 rounded-lg"
@@ -124,8 +125,8 @@ const Purchases = () => {
               <Row
                 key={p._id}
                 p={p}
-                isAdmin={isAdmin}
-                isStaff={isStaff}
+                admin={admin}
+                staff={staff}
                 onUpdateStock={(id, q) =>
                   stockMutation.mutate({ id, quantity: q })
                 }
@@ -158,14 +159,14 @@ const Purchases = () => {
   );
 };
 
-const Row = ({ p, isAdmin, isStaff, onUpdateStock, onDelete, onEdit }) => {
+const Row = ({ p, admin, staff, onUpdateStock, onDelete, onEdit }) => {
   const [qty, setQty] = useState(p.stock ?? 0);
   return (
     <tr className="border-b border-gray-700">
       <td className="p-3">{p.name}</td>
       <td className="p-3">{p.provider?.name || "-"}</td>
       <td className="p-3">
-        {isStaff ? (
+        {staff ? (
           <div className="flex items-center gap-2">
             <input
               type="number"
@@ -195,7 +196,7 @@ const Row = ({ p, isAdmin, isStaff, onUpdateStock, onDelete, onEdit }) => {
       <td className="p-3">{p.expirationDate || "-"}</td>
       <td className="p-3">{p.cost}</td>
       <td className="p-3">
-        {isAdmin && (
+        {admin && (
           <div className="flex items-center gap-3">
             <button onClick={() => onEdit(p)} className="text-blue-400 hover:text-blue-300">Editar</button>
             <button onClick={() => onDelete(p._id)} className="text-red-400 hover:text-red-300">Eliminar</button>
@@ -400,16 +401,16 @@ Row.propTypes = {
     expirationDate: PropTypes.string,
     cost: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }).isRequired,
-  isAdmin: PropTypes.bool,
-  isStaff: PropTypes.bool,
+  admin: PropTypes.bool,
+  staff: PropTypes.bool,
   onUpdateStock: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
 };
 
 Row.defaultProps = {
-  isAdmin: false,
-  isStaff: false,
+  admin: false,
+  staff: false,
 };
 
 Modal.propTypes = {

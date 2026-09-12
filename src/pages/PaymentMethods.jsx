@@ -16,11 +16,11 @@ import {
   getStates,
 } from "../https";
 import { enqueueSnackbar } from "notistack";
+import { isAdmin } from "../utils/roles";
 
 const PaymentMethods = () => {
   const { role } = useSelector((s) => s.user || {});
-  const isAdmin = String(role || "").toLowerCase() === "admin";
-  // const isStaff = isAdmin || String(role || "").toLowerCase() === "cashier";
+  const admin = isAdmin(role);
   useEffect(() => {
     document.title = "NPOS | Métodos de Pago";
   }, []);
@@ -100,7 +100,7 @@ const PaymentMethods = () => {
 	            Activa o desactiva los métodos aceptados desde cualquier dispositivo.
 	          </p>
 	        </div>
-	        {isAdmin && (
+	        {admin && (
 	          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 	            <div className="flex flex-col">
 	              <label className="block text-[#ababab] text-sm mb-1">Nombre</label>
@@ -143,7 +143,7 @@ const PaymentMethods = () => {
             <tr>
               <th className="p-3">Nombre</th>
               <th className="p-3">Estado</th>
-              {isAdmin && <th className="p-3">Acciones</th>}
+              {admin && <th className="p-3">Acciones</th>}
             </tr>
           </thead>
 	          <tbody>
@@ -152,7 +152,7 @@ const PaymentMethods = () => {
 	                key={pm._id}
 	                pm={pm}
 	                estados={estados}
-	                isAdmin={isAdmin}
+	                admin={admin}
 	                onSave={(payload) =>
 	                  updateMutation.mutate({ id: pm._id, payload })
 	                }
@@ -171,13 +171,13 @@ const PaymentMethods = () => {
 	);
 };
 
-const Row = ({ pm, estados, isAdmin, onSave, onSetEstado, onDelete }) => {
+const Row = ({ pm, estados, admin, onSave, onSetEstado, onDelete }) => {
   const [name, setName] = useState(pm.name);
   const [estado, setEstado] = useState(pm.estadoId || "");
   return (
     <tr className="border-b border-[#3a3a3a]">
       <td className="p-3">
-        {isAdmin ? (
+        {admin ? (
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -208,7 +208,7 @@ const Row = ({ pm, estados, isAdmin, onSave, onSetEstado, onDelete }) => {
           </button>
         </div>
       </td>
-      {isAdmin && (
+      {admin && (
         <td className="p-3">
           <div className="flex items-center gap-2">
             <button
@@ -244,14 +244,14 @@ Row.propTypes = {
       name: PropTypes.string,
     })
   ).isRequired,
-  isAdmin: PropTypes.bool,
+  admin: PropTypes.bool,
   onSave: PropTypes.func.isRequired,
   onSetEstado: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
 };
 
 Row.defaultProps = {
-  isAdmin: false,
+  admin: false,
 };
 
 export default PaymentMethods;

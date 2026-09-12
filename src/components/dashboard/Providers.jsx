@@ -4,10 +4,11 @@ import { getProviders, addProvider, updateProvider, deleteProvider } from "../..
 import { enqueueSnackbar } from "notistack";
 import { useSelector } from "react-redux";
 import ProviderFormModal from "./ProviderFormModal";
+import { isAdmin } from "../../utils/roles";
 
 const Providers = () => {
   const { role } = useSelector((s) => s.user);
-  const isAdmin = role === 'Admin';
+  const admin = isAdmin(role);
   const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState(false);
   const [editRow, setEditRow] = useState(null);
@@ -62,7 +63,7 @@ const Providers = () => {
             placeholder="Buscar por nombre, contacto o correo"
             className="bg-[#1f1f1f] border border-[#333] rounded px-3 py-2 text-white w-64"
           />
-          {isAdmin && (
+          {admin && (
             <button
               onClick={() => setShowModal(true)}
               className="bg-[#2F974D] hover:bg-[#277f41] text-[#1a1a1a] font-semibold px-6 py-2 rounded-lg"
@@ -81,7 +82,7 @@ const Providers = () => {
               <th className="p-3">Contacto</th>
               <th className="p-3">Teléfono</th>
               <th className="p-3">Correo</th>
-              {isAdmin && <th className="p-3 text-center">Acciones</th>}
+              {admin && <th className="p-3 text-center">Acciones</th>}
             </tr>
           </thead>
           <tbody>
@@ -91,7 +92,7 @@ const Providers = () => {
                 <td className="p-3">{p.contact}</td>
                 <td className="p-3">{p.phone || '—'}</td>
                 <td className="p-3">{p.email || '—'}</td>
-                {isAdmin && (
+                {admin && (
                   <td className="p-3 text-center space-x-3">
                     <button onClick={() => setEditRow(p)} className="px-3 py-1 bg-blue-600 rounded">Editar</button>
                     <button onClick={() => deleteMutation.mutate(p._id)} className="px-3 py-1 bg-red-600 rounded">Eliminar</button>
@@ -100,7 +101,7 @@ const Providers = () => {
               </tr>
             ))}
             {providers.length === 0 && (
-              <tr><td className="p-4 text-[#ababab]" colSpan={isAdmin ? 5 : 4}>Sin proveedores</td></tr>
+              <tr><td className="p-4 text-[#ababab]" colSpan={admin ? 5 : 4}>Sin proveedores</td></tr>
             )}
           </tbody>
         </table>

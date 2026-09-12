@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getPopularProductsStats } from "../https";
+import { isAdmin } from "../utils/roles";
 
 const RANGE_FILTERS = [
   { id: "all", label: "Todo el tiempo" },
@@ -13,7 +14,7 @@ const RANGE_FILTERS = [
 const DishRank = () => {
   const navigate = useNavigate();
   const { role } = useSelector((state) => state.user);
-  const isAdmin = String(role || "").toLowerCase() === "admin";
+  const admin = isAdmin(role);
   const [range, setRange] = useState("30");
   const [customDates, setCustomDates] = useState({ from: "", to: "" });
   const backendUrl = useMemo(
@@ -46,7 +47,7 @@ const DishRank = () => {
   const { data: products, isLoading } = useQuery({
     queryKey: ["dish-rank", params],
     queryFn: async () => {
-      const res = await getPopularProductsStats(isAdmin ? params : undefined);
+      const res = await getPopularProductsStats(admin ? params : undefined);
       return res?.data?.data || [];
     },
     keepPreviousData: true,
@@ -75,7 +76,7 @@ const DishRank = () => {
           </p>
           <h1 className="text-2xl font-bold">Ranking de Productos más populares</h1>
           <p className="text-sm text-[#ababab]">
-            {isAdmin
+            {admin
               ? "Basado en las ventas registradas en facturas."
               : "Listado informativo de los productos más pedidos por nuestros clientes."}
           </p>
@@ -89,7 +90,7 @@ const DishRank = () => {
         </button>
       </div>
 
-      {isAdmin && (
+      {admin && (
         <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap gap-2">
             {RANGE_FILTERS.map((filter) => (
@@ -148,7 +149,7 @@ const DishRank = () => {
       )}
 
       <div className="mt-6 bg-[#1a1a1a] rounded-xl p-4">
-        {isAdmin && (
+        {admin && (
           <div className="hidden md:grid md:grid-cols-12 text-xs uppercase text-[#777] tracking-wider pb-2 border-b border-[#2a2a2a]">
             <span className="col-span-1">#</span>
             <span className="col-span-5">Producto</span>
@@ -168,7 +169,7 @@ const DishRank = () => {
                   <div className="w-[50px] h-[50px] rounded-full bg-[#333]" />
                   <div className="flex-1 space-y-2">
                     <div className="h-4 bg-[#2b2b2b] rounded w-1/2" />
-                    {isAdmin && (
+                    {admin && (
                       <div className="h-3 bg-[#2b2b2b] rounded w-1/3" />
                     )}
                   </div>
@@ -177,7 +178,7 @@ const DishRank = () => {
             : products && products.length
             ? products.map((product) => {
                 const imageSrc = resolveImageSrc(product);
-                if (isAdmin) {
+                if (admin) {
                   return (
                     <div
                       key={product.productId}

@@ -39,6 +39,7 @@ import {
   FaPrint,
 } from "react-icons/fa";
 import Modal from "../components/shared/Modal";
+import { isAdmin, isStaff } from "../utils/roles";
 
 const ORDER_TEMPLATE = {
   _id: null,
@@ -56,9 +57,8 @@ const Sales = () => {
   }, []);
   const backendUrl = (import.meta.env.VITE_BACKEND_URL || "").replace(/\/$/, "");
   const role = useSelector((state) => state.user.role);
-  const roleLower = String(role || "").toLowerCase();
-  const isAdmin = roleLower === "admin";
-  const isStaff = roleLower === "admin" || roleLower === "cashier";
+  const admin = isAdmin(role);
+  const staff = isStaff(role);
   const [selectedMesa, setSelectedMesa] = useState(null);
   const [order, setOrder] = useState({ ...ORDER_TEMPLATE });
   const [view, setView] = useState("tables"); // 'mesas' | 'productos'
@@ -127,12 +127,12 @@ const Sales = () => {
     queryKey: ["discounts-active"],
     queryFn: async () => await getDiscounts(),
     placeholderData: keepPreviousData,
-    enabled: isStaff,
+    enabled: staff,
   });
   const discounts = discountsRes?.data?.data || [];
   const fullProducts = useMemo(() => {
     if (!products.length) return [];
-    if (!isStaff) return [...products];
+    if (!staff) return [...products];
     const addition = [];
     discounts
       .filter((d) => d.active && d.products?.length)
@@ -182,7 +182,7 @@ const Sales = () => {
         });
       });
     return [...products, ...addition];
-  }, [products, discounts, isStaff]);
+  }, [products, discounts, staff]);
   const { data: statesRes } = useQuery({
     queryKey: ["order-states"],
     queryFn: async () => await getStates(3),
@@ -201,7 +201,7 @@ const Sales = () => {
     queryKey: ["paymethods-mini"],
     queryFn: async () => await getPayMethods(),
     placeholderData: keepPreviousData,
-    enabled: isStaff,
+    enabled: staff,
   });
   const filteredProds = useMemo(() => {
     const f = search.trim().toLowerCase();
@@ -237,11 +237,11 @@ const Sales = () => {
   const isOrderPendingApproval =
     String(order?.orderStatus || "").toUpperCase() === "POR_APROBAR";
   const canRemoveItems = useMemo(() => {
-    if (isAdmin) return true;
+    if (admin) return true;
     return isOrderPendingApproval;
-  }, [isAdmin, isOrderPendingApproval]);
+  }, [admin, isOrderPendingApproval]);
   const canDeleteOrder =
-    isStaff && isOrderPendingApproval && Boolean(order?._id);
+    staff && isOrderPendingApproval && Boolean(order?._id);
   const canAssignCustomer = isOrderPendingApproval;
   const hasCustomerAssigned = Boolean(order?.customer?.name);
   const payMethods = useMemo(() => {
@@ -270,7 +270,7 @@ const Sales = () => {
   }, [order?.items]);
   const hasPendingItems = pendingQuantity > 0;
   const canInvoice =
-    isStaff && order?._id && (order?.items?.length || 0) > 0 && !order?.invoice;
+    staff && order?._id && (order?.items?.length || 0) > 0 && !order?.invoice;
   const customerDisplayName = order?.customer?.name || "Clientes Varios";
   const customerDocument =
     order?.customer?.document ||
@@ -513,7 +513,7 @@ const Sales = () => {
   };
 
   const handleStatusChange = async (nextStatus) => {
-    if (!order?._id || !isStaff) return;
+    if (!order?._id || !staff) return;
     if (String(order.orderStatus || "").toUpperCase() === "CERRADO") {
       enqueueSnackbar("No se puede modificar una orden cerrada", {
         variant: "warning",
@@ -1031,7 +1031,7 @@ const Sales = () => {
           >
             Total $ {(order?.bills?.total || 0).toLocaleString()}
             {order?.orderStatus &&
-              (isStaff ? (
+              (staff ? (
         <select
           value={String(order.orderStatus || "").toUpperCase()}
           onChange={(e) => handleStatusChange(e.target.value)}
@@ -1217,7 +1217,7 @@ const Sales = () => {
               </div>
               <div>
                 Pedido por:{" "}
-                {isStaff && order?._id ? (
+                {staff && order?._id ? (
                   canAssignCustomer ? (
                     <button
                       onClick={openCustomerModal}

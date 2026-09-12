@@ -12,6 +12,7 @@ import { BsCashCoin } from "react-icons/bs";
 import { GrInProgress } from "react-icons/gr";
 import Providers from "../components/dashboard/Providers";
 import useTodayStats from "../hooks/useTodayStats";
+import { isAdmin, isStaff } from "../utils/roles";
 
 const buttons = [
   { label: "Añadir Mesa", icon: <MdTableBar />, action: "table" },
@@ -32,7 +33,8 @@ const Dashboard = () => {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   /* moved add-product into Inventory */
   const { role } = useSelector((state) => state.user);
-  const isAdmin = role === "Admin";
+  const admin = isAdmin(role);
+  const staff = isStaff(role);
   const { data: todayStats, isLoading: statsLoading } = useTodayStats();
 
   const handleOpenModal = (action) => {
@@ -45,9 +47,9 @@ const Dashboard = () => {
     <div className="page-shell">
       <div className="page-shell__content flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-4 sm:py-6">
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-          {(role === "Admin"
+          {(admin
             ? buttons
-            : role === "Cashier"
+            : staff
             ? buttons.filter((b) => b.action === "purchases")
             : []
           ).map(({ label, icon, action }) => {
@@ -115,7 +117,7 @@ const Dashboard = () => {
                 accentColor="#f6b100"
               />
             </div>
-            {isAdmin && (
+            {admin && (
               <div className="flex flex-wrap gap-3">
                 <button
                   type="button"

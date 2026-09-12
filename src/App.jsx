@@ -237,7 +237,7 @@ function ProtectedRoutes({ children, roles, allowGuest }) {
   const { openLoginModal } = useLoginModal();
   if (!isAuth) {
     if (allowGuest) return children;
-    try { openLoginModal(); } catch {}
+    openLoginModal();
     return <Navigate to="/" replace />;
   }
   if (Array.isArray(roles) && roles.length > 0) {

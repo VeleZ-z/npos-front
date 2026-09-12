@@ -3,12 +3,13 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { useLoginModal } from "../../context/LoginModalContext";
 import { getPopularProductsStats } from "../../https";
+import { isAdmin } from "../../utils/roles";
 
 const PopularDishes = () => {
   const navigate = useNavigate();
   const { openLoginModal } = useLoginModal();
   const { role } = useSelector((state) => state.user || {});
-  const isAdmin = String(role || "").toLowerCase() === "admin";
+  const admin = isAdmin(role);
   const { data: resData, isLoading } = useQuery({
     queryKey: ["popular-products", { limit: 3 }],
     queryFn: async () => {
@@ -87,14 +88,14 @@ const PopularDishes = () => {
 	                  <h1 className="text-[#f5f5f5] font-semibold tracking-wide capitalize">
 	                    {p.name}
 	                  </h1>
-	                  {isAdmin && (
+	                  {admin && (
 	                    <p className="text-[#ababab] text-sm mt-1">
 	                      Vendidos: {p.totalQuantity} • ${" "}
 	                      {formatCurrency(p.unitPrice)}
 	                    </p>
 	                  )}
 	                </div>
-	                {isAdmin && (
+	                {admin && (
 	                  <div className="text-right">
 	                    <p className="text-[#f5f5f5] text-sm font-semibold">
 	                      ${formatCurrency(p.totalAmount)}

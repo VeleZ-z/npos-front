@@ -14,6 +14,7 @@ import {
 } from "../../https";
 import { formatDateAndTime } from "../../utils";
 import { useSelector } from "react-redux";
+import { isAdmin, isStaff } from "../../utils/roles";
 
 const STATUS_REQUIRING_TABLE = new Set(["PENDIENTE", "LISTO", "READY"]);
 const DATE_FILTERS = [
@@ -27,9 +28,8 @@ const RecentOrders = () => {
   const qc = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const { role } = useSelector((state) => state.user);
-  const roleLower = String(role || "").toLowerCase();
-  const isAdmin = roleLower === "admin";
-  const isStaff = isAdmin || roleLower === "cashier";
+  const admin = isAdmin(role);
+  const staff = isStaff(role);
   const [statusFilter, setStatusFilter] = useState("all");
   const [rangeFilter, setRangeFilter] = useState("all");
   const [customRange, setCustomRange] = useState({ from: "", to: "" });
@@ -125,12 +125,12 @@ const RecentOrders = () => {
   const commitStatusChange = useCallback(
     (order, status, tableId) => {
       if (!order?._id) return;
-      if (!isStaff) return;
+      if (!staff) return;
       const currentStatus = normalizeStatus(order.orderStatus);
       if (currentStatus === "PAGADO" || currentStatus === "CERRADO") {
         return;
       }
-      if (normalizeStatus(status) === "CERRADO" && !isAdmin) {
+      if (normalizeStatus(status) === "CERRADO" && !admin) {
         enqueueSnackbar("Solo un administrador puede cerrar una orden.", {
           variant: "warning",
         });
@@ -162,17 +162,17 @@ const RecentOrders = () => {
         }
       );
     },
-    [enqueueSnackbar, mutation, requiresTable]
+    [enqueueSnackbar, mutation, requiresTable, admin, staff]
   );
 
   const handleStatusChange = useCallback(
     (order, nextStatus) => {
       const status = normalizeStatus(nextStatus);
       if (!order?._id) return;
-      if (!isStaff) return;
+      if (!staff) return;
       const currentStatus = normalizeStatus(order.orderStatus);
       if (currentStatus === "PAGADO" || currentStatus === "CERRADO") return;
-      if (status === "CERRADO" && !isAdmin) {
+      if (status === "CERRADO" && !admin) {
         enqueueSnackbar("Solo un administrador puede cerrar una orden.", {
           variant: "warning",
         });
@@ -199,6 +199,8 @@ const RecentOrders = () => {
       findTableRecordForOrder,
       commitStatusChange,
       enqueueSnackbar,
+      admin,
+      staff,
     ]
   );
 
@@ -332,7 +334,7 @@ const RecentOrders = () => {
                       Mesa {tableLabel} · {order.items?.length || 0} ítems
                     </p>
                   </div>
-                  {isStaff ? (
+                  {staff ? (
                     <select
                       value={status}
                       onChange={(e) => handleStatusChange(order, e.target.value)}

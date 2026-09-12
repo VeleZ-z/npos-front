@@ -10,6 +10,7 @@ import { MdDashboard } from "react-icons/md";
 import { GiPayMoney } from "react-icons/gi";
 import AlertsBell from "./AlertsBell";
 import { useLoginModal } from "../../context/LoginModalContext";
+import { isStaff } from "../../utils/roles";
 
 const Header = () => {
   const userData = useSelector((state) => state.user);
@@ -60,7 +61,7 @@ const Header = () => {
 
         {/* Actions + Logged user */}
         <div className="flex items-center gap-2 sm:gap-4">
-          {(userData.role === "Admin" || userData.role === "Cashier") && (
+          {isStaff(userData.role) && (
             <button
               onClick={() => navigate("/dashboard")}
               className="bg-[#1f1f1f] rounded-[15px] p-3 flex items-center justify-center hover:bg-[#262626] transition"
@@ -68,7 +69,7 @@ const Header = () => {
               <MdDashboard className="text-[#f5f5f5] text-xl sm:text-2xl" />
             </button>
           )}
-          {(userData.role === "Admin" || userData.role === "Cashier") && (
+          {isStaff(userData.role) && (
             <button
               onClick={() => navigate("/cash-desk")}
               className="bg-[#1f1f1f] rounded-[15px] p-3 flex items-center justify-center hover:bg-[#262626] transition"

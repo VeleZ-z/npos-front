@@ -8,6 +8,7 @@ import { removeAllItems } from "../../redux/slices/cartSlice";
 import { removeCustomer } from "../../redux/slices/customerSlice";
 import Invoice from "../invoice/Invoice";
 import { useNavigate } from "react-router-dom";
+import { isCustomer, isStaff } from "../../utils/roles";
 
 const Bill = () => {
   const dispatch = useDispatch();
@@ -15,6 +16,8 @@ const Bill = () => {
   const cartData = useSelector((state) => state.cart);
   const { role, isAuth } = useSelector((state) => state.user);
   const isGuest = !isAuth;
+  const customer = isCustomer(role);
+  const staff = isStaff(role);
   const navigate = useNavigate();
   const total = useSelector(getTotalPrice);
   const taxRaw = useMemo(() => {
@@ -92,10 +95,9 @@ const Bill = () => {
       }
       enqueueSnackbar("Orden creada!", { variant: "success" });
       // Redirigir segun rol
-      const r = String(role || '').toLowerCase();
-      if (r === 'customer' && isAuth) {
+      if (customer && isAuth) {
         navigate('/orders');
-      } else if (r === 'admin' || r === 'cashier') {
+      } else if (staff) {
         navigate('/cashier');
       } else {
         navigate('/');

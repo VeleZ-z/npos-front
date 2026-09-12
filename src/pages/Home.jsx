@@ -9,11 +9,12 @@ import { GrInProgress } from "react-icons/gr";
 import RecentOrders from "../components/home/RecentOrders";
 import PopularDishes from "../components/home/PopularDishes";
 import useTodayStats from "../hooks/useTodayStats";
+import { isStaff } from "../utils/roles";
 
 const Home = () => {
   const { role } = useSelector((state) => state.user);
-  const isStaff = role === "Admin" || role === "Cashier";
-  const { data: todayStats, isLoading: statsLoading } = useTodayStats({ enabled: isStaff });
+  const staff = isStaff(role);
+  const { data: todayStats, isLoading: statsLoading } = useTodayStats({ enabled: staff });
 
   const miniCards = useMemo(
     () => [
@@ -48,7 +49,7 @@ const Home = () => {
 	          <div className="page-card">
 	            <Greetings />
 	          </div>
-          {isStaff ? (
+          {staff ? (
             <>
               <div className="page-card">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

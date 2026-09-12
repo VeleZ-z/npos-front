@@ -19,11 +19,12 @@ import {
 import { enqueueSnackbar } from "notistack";
 import DishModal from "../components/dashboard/DishModal";
 import { useSelector } from "react-redux";
+import { isAdmin } from "../utils/roles";
 
 const Inventory = () => {
   const qc = useQueryClient();
   const { role } = useSelector((state) => state.user);
-  const canManageAll = role === "Admin";
+  const admin = isAdmin(role);
   useEffect(() => {
     document.title = "NPOS | Inventario";
   }, []);
@@ -72,7 +73,7 @@ const Inventory = () => {
 
   const upd = useMutation({
     mutationFn: ({ id, payload }) =>
-      (canManageAll ? updateProduct : updateProductStockState)(id, payload),
+      (admin ? updateProduct : updateProductStockState)(id, payload),
     onSuccess: () => {
       enqueueSnackbar("Producto actualizado", { variant: "success" });
       qc.invalidateQueries(["products"]);
@@ -181,7 +182,7 @@ const Inventory = () => {
                   taxes={taxes}
                   onSave={(payload) => upd.mutate({ id: p._id, payload })}
                   onUploadImage={(file) => upImg.mutate({ id: p._id, file })}
-                  canManageAll={canManageAll}
+                  admin={admin}
                   onDelete={() => delMutation.mutate(p._id)}
                 />
               ))}
@@ -191,7 +192,7 @@ const Inventory = () => {
       </div>
 
       {/* Boton para añadir producto */}
-	    {canManageAll && (
+	    {admin && (
 	      <button
 	        onClick={() => setShowAdd(true)}
 	        className="fixed bottom-8 right-6 sm:right-8 bg-[#2F974D] hover:bg-[#277f41] text-[#1a1a1a] font-semibold px-5 py-3 rounded-full shadow-lg"
@@ -200,7 +201,7 @@ const Inventory = () => {
 	      </button>
 	    )}
 
-	    {canManageAll && showAdd && <DishModal onClose={() => setShowAdd(false)} />}
+	    {admin && showAdd && <DishModal onClose={() => setShowAdd(false)} />}
 	      </div>
 	    </div>
 	  </section>
@@ -213,7 +214,7 @@ const Row = ({
   taxes,
   onSave,
   onUploadImage,
-  canManageAll,
+  admin,
 }) => {
   const [form, setForm] = useState({
     name: p.name,
@@ -267,7 +268,7 @@ const Row = ({
           value={form.name}
           onChange={onChange}
           className="bg-[#1f1f1f] border border-[#444] rounded px-2 py-1 w-56"
-          disabled={!canManageAll}
+          disabled={!admin}
         />
       </td>
       <td className="p-3">{p?.category?.name || "-"}</td>
@@ -277,7 +278,7 @@ const Row = ({
           value={form.barcode}
           onChange={onChange}
           className="bg-[#1f1f1f] border border-[#444] rounded px-2 py-1 w-40"
-          disabled={!canManageAll}
+          disabled={!admin}
         />
       </td>
       <td className="p-3">
@@ -287,7 +288,7 @@ const Row = ({
           value={form.price}
           onChange={onChange}
           className="bg-[#1f1f1f] border border-[#444] rounded px-2 py-1 w-24"
-          disabled={!canManageAll}
+          disabled={!admin}
         />
       </td>
       <td className="p-3">
@@ -297,7 +298,7 @@ const Row = ({
           value={form.cost}
           onChange={onChange}
           className="bg-[#1f1f1f] border border-[#444] rounded px-2 py-1 w-24"
-          disabled={!canManageAll}
+          disabled={!admin}
         />
       </td>
       <td className="p-3">
@@ -306,7 +307,7 @@ const Row = ({
           value={form.impuestoId}
           onChange={onChange}
           className="bg-[#1f1f1f] border border-[#444] rounded px-2 py-1"
-          disabled={taxes.length === 0 || !canManageAll}
+          disabled={taxes.length === 0 || !admin}
         >
           {taxes.length === 0 ? (
             <option value="" disabled>
@@ -339,7 +340,7 @@ const Row = ({
           onChange={onChange}
           className="bg-[#1f1f1f] border border-[#444] rounded px-2 py-1 w-24"
           placeholder="-"
-          disabled={!canManageAll}
+          disabled={!admin}
         />
       </td>
       <td className="p-3">
@@ -361,7 +362,7 @@ const Row = ({
         <div className="flex items-center gap-2">
           <button
             onClick={() => {
-              if (canManageAll) {
+              if (admin) {
                 onSave({
                   name: form.name,
                   codigo_barras: form.barcode,
@@ -386,7 +387,7 @@ const Row = ({
           >
             Guardar
           </button>
-          {canManageAll && (
+          {admin && (
             <button
               onClick={() => {
                 const msg = `CONFIRMACION\n\nPara eliminar el producto escribe exactamente su nombre.\n\nNombre: "${p.name}"\n\nEsta es la confirmación.`;
@@ -421,7 +422,7 @@ const Row = ({
               No img
             </div>
           )}
-          {canManageAll && (
+          {admin && (
             <>
               <input
                 ref={fileRef}
@@ -487,7 +488,7 @@ Row.propTypes = {
   ).isRequired,
   onSave: PropTypes.func.isRequired,
   onUploadImage: PropTypes.func.isRequired,
-  canManageAll: PropTypes.bool.isRequired,
+  admin: PropTypes.bool.isRequired,
 };
 
 export default Inventory;

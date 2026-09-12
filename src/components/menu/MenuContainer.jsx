@@ -5,13 +5,12 @@ import { GrRadialSelected } from "react-icons/gr";
 import { FaShoppingCart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { addItems } from "../../redux/slices/cartSlice";
+import { isStaff } from "../../utils/roles";
 
 const MenuContainer = () => {
   const backendUrl = (import.meta.env.VITE_BACKEND_URL || "").replace(/\/$/, "");
   const role = useSelector((state) => state.user.role);
-  const canSeeDiscounts =
-    String(role || "").toLowerCase() === "admin" ||
-    String(role || "").toLowerCase() === "cashier";
+  const staff = isStaff(role);
   const { data: catsRes } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => await getCategories(),
@@ -40,7 +39,7 @@ const MenuContainer = () => {
 
   const fullProducts = useMemo(() => {
     if (!products.length) return [];
-    if (!canSeeDiscounts) return [...products];
+    if (!staff) return [...products];
     const addition = [];
     discounts
       .filter((d) => d.active && d.products?.length)
@@ -88,7 +87,7 @@ const MenuContainer = () => {
         });
       });
     return [...products, ...addition];
-  }, [products, discounts, canSeeDiscounts]);
+  }, [products, discounts, staff]);
 
   const selectedItems = useMemo(() => {
     const catId = selected?._id || categories[0]?._id || null;
