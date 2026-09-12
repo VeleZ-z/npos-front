@@ -61,7 +61,6 @@ jobs:
 
       - name: Lint
         run: pnpm lint
-        continue-on-error: true
 
       - name: Run tests with coverage
         run: pnpm test:coverage
