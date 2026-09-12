@@ -1,5 +1,3 @@
-[![Coverage Status](https://coveralls.io/repos/github/VeleZ-z/npos-front/badge.svg?branch=main)](https://coveralls.io/github/VeleZ-z/npos-front?branch=main)
-
 # Nativ POS System - Frontend (`npos-front`)
 
 Interfaz de usuario moderna y rápida para la gestión operativa de restaurantes y facturación, desarrollada con **React, Vite, Redux Toolkit y TanStack Query**.
