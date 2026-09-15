@@ -13,7 +13,23 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'lcov', 'html'],
-      include: ['src/utils/**', 'src/redux/**', 'src/https/**'],
+      include: [
+        'src/utils/**',
+        'src/redux/**',
+        'src/https/**',
+        'src/hooks/**',
+        'src/components/**',
+        'src/pages/**',
+      ],
+      exclude: [
+        'src/main.jsx',
+        'src/pages/index.js',
+        'src/constants/**',
+        'src/context/**',
+        'src/test/**',
+        '**/*.test.{js,jsx}',
+        '**/*.spec.{js,jsx}',
+      ],
     },
   },
 })
