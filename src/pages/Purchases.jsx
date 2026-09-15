@@ -47,7 +47,9 @@ const Purchases = () => {
     if (!term) return purchases;
     return purchases.filter((p) => {
       const name = (p.name || "").toLowerCase();
-      const provider = (p.providerName || p.provider || "").toLowerCase();
+      const provider = String(
+        p.providerName || p.provider?.name || p.provider || ""
+      ).toLowerCase();
       return name.includes(term) || provider.includes(term);
     });
   }, [purchases, search]);

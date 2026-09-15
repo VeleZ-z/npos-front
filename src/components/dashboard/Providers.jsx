@@ -101,7 +101,7 @@ const Providers = () => {
                 )}
               </tr>
             ))}
-            {providers.length === 0 && (
+            {(providers?.length ?? 0) === 0 && (
               <tr><td className="p-4 text-[#ababab]" colSpan={admin ? 5 : 4}>Sin proveedores</td></tr>
             )}
           </tbody>
