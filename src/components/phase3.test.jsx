@@ -83,9 +83,15 @@ vi.mock('../hooks/useTodayStats', () => ({
   }),
 }));
 
+const { loginModalMock } = vi.hoisted(() => ({ loginModalMock: vi.fn() }));
+const navigateMock = vi.fn();
 vi.mock('../context/LoginModalContext', () => ({
-  useLoginModal: () => ({ openLoginModal: vi.fn() }),
+  useLoginModal: () => ({ openLoginModal: loginModalMock }),
 }));
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useNavigate: () => navigateMock };
+});
 
 vi.mock('framer-motion', () => {
   // componente estable: evita remounts que pierden foco/estado de inputs
@@ -231,6 +237,62 @@ describe('RecentOrders (dashboard)', () => {
     expect(document.querySelectorAll('input[type="date"]').length).toBe(2);
   });
 
+  it('orden de cliente sin mesa: abre prompt y asigna mesa del modal', async () => {
+    getTables.mockResolvedValue(res([{ _id: 't1', number: 3, status: 'Available' }]));
+    const user = userEvent.setup();
+    renderWithProviders(<RecentOrdersDash />, adminState);
+    await waitFor(() => screen.getByText('Luis'));
+    // orden de cliente (userId) con mesa 5 inexistente → prompt "missing"
+    const selects = screen.getAllByRole('combobox');
+    fireEvent.change(selects[1], { target: { value: 'PENDIENTE' } });
+    await waitFor(() =>
+      expect(screen.getByText('Asignar mesa')).toBeInTheDocument()
+    );
+    await user.click(screen.getByRole('button', { name: /Mesa 03/ }));
+    await waitFor(() => expect(updateOrderStatus).toHaveBeenCalled());
+    expect(updateOrderStatus.mock.calls[0][0]).toEqual(
+      expect.objectContaining({ orderId: 'o2', orderStatus: 'PENDIENTE', tableId: 't1' })
+    );
+    await waitFor(() =>
+      expect(screen.queryByText('Asignar mesa')).not.toBeInTheDocument()
+    );
+  });
+
+  it('error 409 al cambiar estado: avisa mesa ocupada y abre prompt', async () => {
+    updateOrderStatus.mockRejectedValue({ response: { status: 409 } });
+    const user = userEvent.setup();
+    renderWithProviders(<RecentOrdersDash />, adminState);
+    await waitFor(() => screen.getByText('Luis'));
+    const selects = screen.getAllByRole('combobox');
+    fireEvent.change(selects[1], { target: { value: 'PENDIENTE' } });
+    await waitFor(() =>
+      expect(screen.getByText(/La mesa seleccionada está ocupada/)).toBeInTheDocument()
+    );
+    expect(screen.getAllByText('Mesa 05').length).toBeGreaterThan(0);
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+    await waitFor(() =>
+      expect(screen.queryByText('Asignar mesa')).not.toBeInTheDocument()
+    );
+  });
+
+  it('error 400 requiriendo mesa: avisa y abre prompt', async () => {
+    updateOrderStatus.mockRejectedValue({
+      response: { status: 400, data: { message: 'Falta mesa' } },
+    });
+    renderWithProviders(<RecentOrdersDash />, adminState);
+    await waitFor(() => screen.getByText('Luis'));
+    const selects = screen.getAllByRole('combobox');
+    fireEvent.change(selects[1], { target: { value: 'PENDIENTE' } });
+    // el mensaje del backend va al snackbar (mockeado)
+    await waitFor(() =>
+      expect(enqueueSnackbar).toHaveBeenCalledWith('Falta mesa', { variant: 'info' })
+    );
+    // el modal "missing" muestra su texto propio
+    await waitFor(() =>
+      expect(screen.getByText(/no tiene una mesa asignada/)).toBeInTheDocument()
+    );
+  });
+
   it('cliente sin rol staff ve estado como texto', async () => {
     renderWithProviders(<RecentOrdersDash />, {
       initialState: { user: { role: 'Waiter' } },
@@ -373,6 +435,35 @@ describe('Invoice', () => {
     expect(container.textContent).toContain('ord-1');
   });
 
+  it('print exitoso escribe el contenido en la ventana', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    const setShow = vi.fn();
+    const fakeDoc = {
+      title: '',
+      head: { innerHTML: '', appendChild: vi.fn() },
+      body: { innerHTML: '' },
+      createElement: () => ({ textContent: '' }),
+    };
+    const fakeWin = {
+      document: fakeDoc,
+      focus: vi.fn(),
+      print: vi.fn(),
+      close: vi.fn(),
+    };
+    const openSpy = vi.spyOn(window, 'open').mockReturnValue(fakeWin);
+    renderWithProviders(<Invoice orderInfo={{ ...orderInfo }} setShowInvoice={setShow} />);
+    await user.click(screen.getByText('Print Receipt'));
+    expect(fakeDoc.title).toBe('Order Receipt');
+    expect(fakeDoc.body.innerHTML).toContain('Order Receipt');
+    // el print corre en un setTimeout de 1000ms
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(fakeWin.print).toHaveBeenCalled();
+    expect(fakeWin.close).toHaveBeenCalled();
+    openSpy.mockRestore();
+    vi.useRealTimers();
+  });
+
   it('print abre ventana y close dispara callback', async () => {
     const user = userEvent.setup();
     const setShow = vi.fn();
@@ -418,6 +509,22 @@ describe('PopularDishes', () => {
     expect(screen.getByText(/Total acumulado/)).toBeInTheDocument();
   });
 
+  it('admin: Ver todos navega a /dishrank; sin rol abre login', async () => {
+    const user = userEvent.setup();
+    navigateMock.mockClear();
+    const { unmount } = renderWithProviders(<PopularDishes />, adminState);
+    await waitFor(() => screen.getByText('pizza'));
+    await user.click(screen.getByText('Ver todos'));
+    expect(navigateMock).toHaveBeenCalledWith('/dishrank');
+    unmount();
+
+    loginModalMock.mockClear();
+    renderWithProviders(<PopularDishes />, { initialState: { user: {} } });
+    await waitFor(() => screen.getByText('Ver todos'));
+    await user.click(screen.getByText('Ver todos'));
+    expect(loginModalMock).toHaveBeenCalled();
+  });
+
   it('oculta montos a no-admin y muestra estado vacío', async () => {
     getPopularProductsStats.mockResolvedValue(res([]));
     renderWithProviders(<PopularDishes />, {
@@ -447,6 +554,25 @@ describe('DiscountsTable', () => {
     await waitFor(() =>
       expect(screen.getByText(/Sin descuentos activos/)).toBeInTheDocument()
     );
+  });
+
+  it('carousel navega con flechas y dots', async () => {
+    getDiscounts.mockResolvedValue(
+      res([
+        { _id: 'd1', name: 'Uno', percent: 10, products: [{ productId: 'p1' }] },
+        { _id: 'd2', name: 'Dos', value: 1000, products: [{ productId: 'p1' }] },
+      ])
+    );
+    const user = userEvent.setup();
+    renderWithProviders(<DiscountsTable />);
+    await waitFor(() => expect(screen.getByText('Uno')).toBeInTheDocument());
+    expect(screen.getByText('2 descuentos')).toBeInTheDocument();
+    // siguiente → Dos visible
+    await user.click(screen.getByText('>'));
+    await waitFor(() => expect(screen.getByText('Dos')).toBeInTheDocument());
+    // prev vuelve a Uno
+    await user.click(screen.getByText('<'));
+    await waitFor(() => expect(screen.getByText('Uno')).toBeInTheDocument());
   });
 });
 

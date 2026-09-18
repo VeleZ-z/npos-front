@@ -55,6 +55,11 @@ import {
   getAuthState,
 } from '../https';
 
+const { loginModalMock } = vi.hoisted(() => ({ loginModalMock: vi.fn() }));
+vi.mock('../context/LoginModalContext', () => ({
+  useLoginModal: () => ({ openLoginModal: loginModalMock }),
+}));
+
 vi.mock('./shared/AlertsBell', () => ({
   default: () => <div data-testid="alerts" />,
 }));
@@ -304,11 +309,51 @@ describe('Header', () => {
     expect(localStorage.getItem('token')).toBeNull();
   });
 
+  it('error en logout mantiene la sesión', async () => {
+    localStorage.setItem('token', 'tok');
+    logout.mockRejectedValue(new Error('server down'));
+    const user = userEvent.setup();
+    const store = makeStore({ user: { name: 'Ana', role: 'Admin', isAuth: true } });
+    renderWithProviders(<Header />, { store });
+    await user.click(
+      document.querySelectorAll('svg')[document.querySelectorAll('svg').length - 1]
+    );
+    await waitFor(() => expect(logout).toHaveBeenCalled());
+    expect(store.getState().user.isAuth).toBe(true);
+    expect(localStorage.getItem('token')).toBe('tok');
+  });
+
   it('staff ve botones de dashboard y caja', () => {
     renderWithProviders(<Header />, {
       initialState: { user: { name: 'Ana', role: 'Cashier', isAuth: true } },
     });
     expect(screen.getByTitle('Relación de caja')).toBeInTheDocument();
+  });
+
+  it('logo navega a home; click en usuario navega a perfil', async () => {
+    const user = userEvent.setup();
+    navigateMock.mockClear();
+    renderWithProviders(<Header />, {
+      initialState: { user: { name: 'Ana', role: 'Cashier', isAuth: true } },
+    });
+    await user.click(screen.getByAltText('restro logo'));
+    expect(navigateMock).toHaveBeenCalledWith('/');
+    await user.click(screen.getByText('Ana'));
+    expect(navigateMock).toHaveBeenCalledWith('/profile');
+  });
+
+  it('staff: botones de dashboard y caja navegan', async () => {
+    const user = userEvent.setup();
+    navigateMock.mockClear();
+    renderWithProviders(<Header />, {
+      initialState: { user: { name: 'Ana', role: 'Cashier', isAuth: true } },
+    });
+    await user.click(screen.getByTitle('Relación de caja'));
+    expect(navigateMock).toHaveBeenCalledWith('/cash-desk');
+    // botón de dashboard (sin title, con icono MdDashboard)
+    const dashboardBtn = document.querySelector('header button:not([title])');
+    await user.click(dashboardBtn);
+    expect(navigateMock).toHaveBeenCalledWith('/dashboard');
   });
 });
 
@@ -354,6 +399,83 @@ describe('BottomNav', () => {
     openSpy.mockRestore();
   });
 
+  it('comensales: tope máximo 6 y mínimo 0', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<BottomNav />, {
+      initialState: { user: { role: 'Customer', isAuth: true } },
+    });
+    const fab = document.querySelectorAll('button')[4];
+    await user.click(fab);
+    await waitFor(() =>
+      expect(screen.getByText('0 Personas')).toBeInTheDocument()
+    );
+    const plus = screen.getByText('+');
+    for (let i = 0; i < 8; i += 1) {
+      await user.click(plus);
+    }
+    expect(screen.getByText('6 Personas')).toBeInTheDocument();
+    const minus = screen.getByText('−');
+    for (let i = 0; i < 8; i += 1) {
+      await user.click(minus);
+    }
+    expect(screen.getByText('0 Personas')).toBeInTheDocument();
+  });
+
+  it('customer autenticado: Ordenes y Promociones navegan', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<BottomNav />, {
+      initialState: { user: { role: 'Customer', isAuth: true } },
+    });
+    await user.click(screen.getByRole('button', { name: /Ordenes/ }));
+    expect(navigateMock).toHaveBeenCalledWith('/orders');
+    await user.click(screen.getByRole('button', { name: /Promociones/ }));
+    expect(navigateMock).toHaveBeenCalledWith('/promociones');
+  });
+
+  it('customer: Mas abre Facebook, WhatsApp y TikTok', async () => {
+    const openSpy = vi.spyOn(window, 'open').mockReturnValue(null);
+    const user = userEvent.setup();
+    renderWithProviders(<BottomNav />, {
+      initialState: { user: { role: 'Customer', isAuth: true } },
+    });
+    // cada link cierra el modal, así que se reabre antes de cada click
+    await user.click(screen.getByRole('button', { name: /Mas/ }));
+    await waitFor(() => screen.getByText('Facebook'));
+    await user.click(screen.getByText('Facebook'));
+    expect(openSpy).toHaveBeenCalledWith('https://facebook.com/nativhos_quibdo', '_blank', 'noopener,noreferrer');
+
+    await user.click(screen.getByRole('button', { name: /Mas/ }));
+    await waitFor(() => screen.getByText('WhatsApp'));
+    await user.click(screen.getByText('WhatsApp'));
+    expect(openSpy).toHaveBeenCalledWith('https://wa.me/573233800506', '_blank', 'noopener,noreferrer');
+
+    await user.click(screen.getByRole('button', { name: /Mas/ }));
+    await waitFor(() => screen.getByText('TikTok'));
+    await user.click(screen.getByText('TikTok'));
+    expect(openSpy).toHaveBeenCalledWith('https://tiktok.com/@nativhos_quibdo', '_blank', 'noopener,noreferrer');
+    openSpy.mockRestore();
+  });
+
+  it('staff sin autenticar: Promociones dispara login modal', async () => {
+    loginModalMock.mockClear();
+    const user = userEvent.setup();
+    renderWithProviders(<BottomNav />, {
+      initialState: { user: { role: 'Cashier', isAuth: false } },
+    });
+    await user.click(screen.getByRole('button', { name: /Promociones/ }));
+    expect(loginModalMock).toHaveBeenCalled();
+  });
+
+  it('invitado no autenticado: botón Ordenes dispara login modal', async () => {
+    loginModalMock.mockClear();
+    const user = userEvent.setup();
+    renderWithProviders(<BottomNav />, {
+      initialState: { user: { role: '', isAuth: false } },
+    });
+    await user.click(screen.getByRole('button', { name: /Ordenes/ }));
+    expect(loginModalMock).toHaveBeenCalled();
+  });
+
   it('staff: FAB navega a /sales y Mas muestra opciones admin', async () => {
     const user = userEvent.setup();
     renderWithProviders(<BottomNav />, {
@@ -382,6 +504,7 @@ describe('BottomNav', () => {
 
 describe('GoogleOneTap', () => {
   it('sin clientId muestra error de configuración', async () => {
+    delete window.__GIS_STATE__;
     vi.stubEnv('VITE_GOOGLE_CLIENT_ID', '');
     renderWithProviders(<GoogleOneTap />);
     await waitFor(() =>
@@ -390,7 +513,96 @@ describe('GoogleOneTap', () => {
     vi.unstubAllEnvs();
   });
 
+  it('falla getAuthState al montar y muestra error', async () => {
+    const initialize = vi.fn();
+    window.google = { accounts: { id: { initialize, renderButton: vi.fn(), prompt: vi.fn() } } };
+    vi.stubEnv('VITE_GOOGLE_CLIENT_ID', 'cid-123');
+    getAuthState.mockRejectedValue(new Error('net'));
+    renderWithProviders(<GoogleOneTap />);
+    await waitFor(() =>
+      expect(screen.getByText(/No se pudo obtener 'state' del servidor/)).toBeInTheDocument()
+    );
+    delete window.google;
+    vi.unstubAllEnvs();
+  });
+
+  it('credencial sin token no loguea; error 400 de state refresca y re-prompta', async () => {
+    const initialize = vi.fn();
+    const prompt = vi.fn();
+    window.google = { accounts: { id: { initialize, renderButton: vi.fn(), prompt } } };
+    vi.stubEnv('VITE_GOOGLE_CLIENT_ID', 'cid-123');
+    getAuthState.mockResolvedValue({ data: { state: 'st-1' } });
+    // primer intento: credencial presente pero login falla con 400 state
+    googleLogin.mockRejectedValue({
+      response: { status: 400, data: { message: 'invalid state' } },
+    });
+    const store = makeStore({ user: {} });
+    renderWithProviders(<GoogleOneTap />, { store });
+    await waitFor(() => expect(initialize).toHaveBeenCalled());
+    const initCall = initialize.mock.calls[0][0];
+    await initCall.callback({ credential: 'jwt-x' });
+    await waitFor(() => expect(googleLogin).toHaveBeenCalled());
+    // refreshStateAndPrompt: nueva llamada a getAuthState + nuevo prompt
+    await waitFor(() => expect(getAuthState).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(prompt).toHaveBeenCalledTimes(2));
+    // el usuario no quedó autenticado
+    expect(store.getState().user.name).toBeUndefined();
+
+    // segundo intento: credencial válida
+    googleLogin.mockResolvedValue({
+      data: { token: 'tok-2', data: { _id: 'u2', name: 'Luis', email: 'l@x.co', role: 'Cashier' } },
+    });
+    const initCall2 = initialize.mock.calls[initialize.mock.calls.length - 1][0];
+    await initCall2.callback({ credential: 'jwt-ok' });
+    await waitFor(() => expect(store.getState().user.name).toBe('Luis'));
+    delete window.google;
+    delete window.__GIS_STATE__;
+    vi.unstubAllEnvs();
+  });
+
+  it('sin API GIS inyecta el script de Google y muestra error si falla', async () => {
+    vi.stubEnv('VITE_GOOGLE_CLIENT_ID', 'cid-123');
+    getAuthState.mockResolvedValue({ data: { state: 'st-9' } });
+    renderWithProviders(<GoogleOneTap />);
+    // inyecta el script
+    await waitFor(() =>
+      expect(document.getElementById('google-identity-services')).toBeInTheDocument()
+    );
+    const script = document.getElementById('google-identity-services');
+    expect(script.src).toContain('accounts.google.com/gsi/client');
+    // falla la carga del script
+    script.dispatchEvent(new Event('error'));
+    await waitFor(() =>
+      expect(screen.getByText(/No se pudo cargar el script de Google/)).toBeInTheDocument()
+    );
+    delete window.__GIS_STATE__;
+    vi.unstubAllEnvs();
+  });
+
+  it('onload del script inicializa GIS y renderiza botón', async () => {
+    const initialize = vi.fn();
+    const renderButton = vi.fn((el) => {
+      el.appendChild(document.createElement('span'));
+    });
+    window.google = { accounts: { id: { initialize, renderButton, prompt: vi.fn() } } };
+    vi.stubEnv('VITE_GOOGLE_CLIENT_ID', 'cid-123');
+    getAuthState.mockResolvedValue({ data: { state: 'st-9' } });
+    renderWithProviders(<GoogleOneTap />);
+    await waitFor(() =>
+      expect(document.getElementById('google-identity-services')).toBeInTheDocument()
+    );
+    const script = document.getElementById('google-identity-services');
+    await script.onload();
+    await waitFor(() => expect(initialize).toHaveBeenCalled());
+    await waitFor(() => expect(renderButton).toHaveBeenCalled());
+    expect(window.__GIS_STATE__).toBe('st-9');
+    delete window.google;
+    delete window.__GIS_STATE__;
+    vi.unstubAllEnvs();
+  });
+
   it('con API GIS inicializa, renderiza botón y maneja credencial', async () => {
+    delete window.__GIS_STATE__;
     const initialize = vi.fn();
     const renderButton = vi.fn((el) => {
       el.appendChild(document.createElement('span'));
@@ -417,6 +629,7 @@ describe('GoogleOneTap', () => {
     expect(store.getState().user.name).toBe('Ana');
     expect(navigateMock).toHaveBeenCalledWith('/');
     delete window.google;
+    delete window.__GIS_STATE__;
     vi.unstubAllEnvs();
   });
 });

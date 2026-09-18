@@ -1,4 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/VeleZ-z/npos-front/badge.svg?branch=main)](https://coveralls.io/github/VeleZ-z/npos-front?branch=main)
+[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=VeleZ-z_npos-front&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=VeleZ-z_npos-front)
 
 # Nativ POS System - Frontend (`npos-front`)
 

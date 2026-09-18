@@ -39,6 +39,7 @@ vi.mock('../https', () => ({
   getOrderHistory: vi.fn(),
 }));
 
+import { enqueueSnackbar } from 'notistack';
 import {
   getTables,
   getOrders,
@@ -58,6 +59,9 @@ import {
   deleteOrder,
   setOrderCustomer,
   getPayMethods,
+  updateOrderItem,
+  deleteOrderItem,
+  searchUsers,
 } from '../https';
 
 vi.mock('../components/dashboard/DishModal', () => ({
@@ -553,5 +557,174 @@ describe('Sales', () => {
     await user.click(screen.getByRole('button', { name: /Eliminar Pedido/ }));
     await waitFor(() => expect(deleteOrder).toHaveBeenCalledWith('order1'));
     confirmSpy.mockRestore();
+  });
+
+  it('cancela la eliminación cuando el confirm es falso', async () => {
+    const user = userEvent.setup();
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    renderWithProviders(<Sales />, adminState);
+    await waitFor(() => screen.getByText('01'));
+    await user.click(screen.getByText('01'));
+    await waitFor(() => screen.getByRole('button', { name: /Eliminar Pedido/ }));
+    await user.click(screen.getByRole('button', { name: /Eliminar Pedido/ }));
+    expect(deleteOrder).not.toHaveBeenCalled();
+    confirmSpy.mockRestore();
+  });
+
+  it('monto insuficiente en efectivo bloquea la facturación', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Sales />, adminState);
+    await waitFor(() => screen.getByText('01'));
+    await user.click(screen.getByText('01'));
+    await waitFor(() => screen.getByRole('button', { name: /^Facturar$/ }));
+    await user.click(screen.getAllByRole('button', { name: /^Facturar$/ })[0]);
+    await waitFor(() => expect(screen.getByText('Monto recibido')).toBeInTheDocument());
+    const amountInput = document.querySelector('input[type="number"]');
+    await user.type(amountInput, '100');
+    const submitBtns = screen.getAllByRole('button', { name: /^Facturar$/ });
+    await user.click(submitBtns[submitBtns.length - 1]);
+    expect(createInvoice).not.toHaveBeenCalled();
+    expect(enqueueSnackbar).toHaveBeenCalledWith('El monto recibido es insuficiente', {
+      variant: 'warning',
+    });
+  });
+
+  it('agrega nota al ítem y guarda con updateOrderItem', async () => {
+    const user = userEvent.setup();
+    const promptSpy = vi.spyOn(window, 'prompt').mockReturnValue('Sin sal');
+    updateOrderItem.mockResolvedValue(res(ORDER));
+    renderWithProviders(<Sales />, adminState);
+    await waitFor(() => screen.getByText('01'));
+    await user.click(screen.getByText('01'));
+    await waitFor(() => screen.getByRole('button', { name: /Nota/ }));
+    await user.click(screen.getByRole('button', { name: /Nota/ }));
+    await waitFor(() =>
+      expect(updateOrderItem).toHaveBeenCalledWith('order1', 'it1', { note: 'Sin sal' })
+    );
+    promptSpy.mockRestore();
+  });
+
+  it('quitar ítem llama deleteOrderItem siendo admin', async () => {
+    const user = userEvent.setup();
+    deleteOrderItem.mockResolvedValue(res({ ...ORDER, items: [] }));
+    renderWithProviders(<Sales />, adminState);
+    await waitFor(() => screen.getByText('01'));
+    await user.click(screen.getByText('01'));
+    await waitFor(() =>
+      expect(screen.getAllByRole('button', { name: 'Quitar' }).length).toBeGreaterThan(0)
+    );
+    await user.click(screen.getByRole('button', { name: 'Quitar' }));
+    await waitFor(() =>
+      expect(deleteOrderItem).toHaveBeenCalledWith('order1', 'it1')
+    );
+  });
+
+  it('disminuir cantidad a cero elimina el ítem', async () => {
+    const user = userEvent.setup();
+    updateOrderItem.mockResolvedValue(
+      res({ ...ORDER, items: [{ ...ORDER.items[0], quantity: 1 }] })
+    );
+    deleteOrderItem.mockResolvedValue(res({ ...ORDER, items: [] }));
+    renderWithProviders(<Sales />, adminState);
+    await waitFor(() => screen.getByText('01'));
+    await user.click(screen.getByText('01'));
+    await waitFor(() => screen.getByTitle('Quitar uno'));
+    await user.click(screen.getByTitle('Quitar uno'));
+    await waitFor(() =>
+      expect(updateOrderItem).toHaveBeenCalledTimes(1)
+    );
+    // segunda resta: 1 - 1 = 0 → elimina el ítem
+    await user.click(screen.getByTitle('Quitar uno'));
+    await waitFor(() =>
+      expect(deleteOrderItem).toHaveBeenCalledWith('order1', 'it1')
+    );
+  });
+
+  it('factura genera ticket impreso y resetea la mesa al PAGADO', async () => {
+    const user = userEvent.setup();
+    const written = [];
+    const fakeDoc = {
+      title: '',
+      head: { innerHTML: '', appendChild: vi.fn() },
+      body: { innerHTML: '' },
+      createElement: () => ({ textContent: '' }),
+      open: vi.fn(),
+      write: (html) => written.push(html),
+      close: vi.fn(),
+    };
+    const fakeWin = { document: fakeDoc, focus: vi.fn(), print: vi.fn(), close: vi.fn() };
+    const openSpy = vi.spyOn(window, 'open').mockReturnValue(fakeWin);
+    createInvoice.mockResolvedValue(
+      res({
+        order: { ...ORDER, orderStatus: 'PAGADO' },
+        invoice: {
+          invoiceNumber: 'F-0042',
+          issuer: { businessName: 'Nativhos', nit: '11810434-9', address: 'Cra 1', phone: '323' },
+          customer: { name: 'Cliente Prueba' },
+          paymentMethod: { name: 'Efectivo' },
+          tip: 2000,
+          totals: { subtotal: 18400, tax: 1600, total: 20400 },
+          createdAt: new Date('2026-09-15T10:00:00'),
+          items: [{ discount: { id: 'd1' } }],
+        },
+      })
+    );
+    renderWithProviders(<Sales />, adminState);
+    await waitFor(() => screen.getByText('01'));
+    await user.click(screen.getByText('01'));
+    await waitFor(() => screen.getByRole('button', { name: /^Facturar$/ }));
+    await user.click(screen.getAllByRole('button', { name: /^Facturar$/ })[0]);
+    await waitFor(() => expect(screen.getByText('Monto recibido')).toBeInTheDocument());
+    await user.type(document.querySelector('input[type="number"]'), '25000');
+    const submitBtns = screen.getAllByRole('button', { name: /^Facturar$/ });
+    await user.click(submitBtns[submitBtns.length - 1]);
+    await waitFor(() => expect(openSpy).toHaveBeenCalled());
+    await waitFor(() => expect(written.length).toBeGreaterThan(0));
+    const html = written[0];
+    expect(html).toContain('FACTURA');
+    expect(html).toContain('NATIVHOS');
+    expect(html).toContain('42');
+    expect(html).toContain('CLIENTE PRUEBA');
+    expect(html).toContain('d1'); // DTO: código de descuento del ítem facturado
+    expect(html).toContain('<title>FACTURA</title>');
+    openSpy.mockRestore();
+  });
+
+  it('reimprimir toda la comanda imprime cantidades completas', async () => {
+    const user = userEvent.setup();
+    const fakeDoc = {
+      title: '',
+      head: { innerHTML: '', appendChild: vi.fn() },
+      body: { innerHTML: '' },
+      createElement: () => ({ textContent: '' }),
+    };
+    const fakeWin = { document: fakeDoc, focus: vi.fn(), print: vi.fn(), close: vi.fn() };
+    const openSpy = vi.spyOn(window, 'open').mockReturnValue(fakeWin);
+    renderWithProviders(<Sales />, adminState);
+    await waitFor(() => screen.getByText('01'));
+    await user.click(screen.getByText('01'));
+    await waitFor(() => screen.getByRole('button', { name: /ReImprimir/ }));
+    await user.click(screen.getByRole('button', { name: /ReImprimir/ }));
+    await waitFor(() => expect(openSpy).toHaveBeenCalled());
+    expect(fakeDoc.body.innerHTML).toContain('PIZZA');
+    openSpy.mockRestore();
+  });
+
+  it('error en búsqueda de usuarios deja resultados vacíos', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    searchUsers.mockRejectedValue(new Error('boom'));
+    renderWithProviders(<Sales />, adminState);
+    await waitFor(() => screen.getByText('01'));
+    await user.click(screen.getByText('01'));
+    await waitFor(() => screen.getByRole('button', { name: 'Asignar cliente' }));
+    await user.click(screen.getByRole('button', { name: 'Asignar cliente' }));
+    const searchInput = screen.getByPlaceholderText(/Buscar por nombre, correo/);
+    await user.type(searchInput, 'x');
+    await vi.advanceTimersByTimeAsync(400);
+    await waitFor(() =>
+      expect(screen.getByText('Sin resultados')).toBeInTheDocument()
+    );
+    vi.useRealTimers();
   });
 });
